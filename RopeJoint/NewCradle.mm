@@ -1,14 +1,14 @@
 //
-//  HelloWorldLayer.mm
-//  RopeJoint
+//  NewCradleScene.mm
+//  verletRopeTestProject
 //
-//  Created by Saida Memon on 3/2/12.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
+//  Created by patrick on 29/10/2010.
+//  Copyright __MyCompanyName__ 2010. All rights reserved.
 //
 
 
 // Import the interfaces
-#import "HelloWorldLayer.h"
+#import "NewCradle.h"
 
 //Pixel to metres ratio. Box2D uses metres as the unit for measurement.
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
@@ -24,8 +24,8 @@ enum {
 };
 
 
-// HelloWorldLayer implementation
-@implementation HelloWorldLayer
+// NewCradle implementation
+@implementation NewCradle
 
 +(id) scene
 {
@@ -33,7 +33,7 @@ enum {
 	CCScene *scene = [CCScene node];
 	
 	// 'layer' is an autorelease object.
-	HelloWorldLayer *layer = [HelloWorldLayer node];
+	NewCradle *layer = [NewCradle node];
 	
 	// add layer as a child to scene
 	[scene addChild: layer];
@@ -85,11 +85,8 @@ enum {
 		// Define the ground body.
 		b2BodyDef groundBodyDef;
 		groundBodyDef.position.Set(0, 0); // bottom-left corner
-        
-		// +++ Add anchor body
-		b2BodyDef anchorBodyDef;
-		anchorBodyDef.position.Set(screenSize.width/PTM_RATIO/2,screenSize.height/PTM_RATIO*0.7f); //center body on screen
-		anchorBody = world->CreateBody(&anchorBodyDef);
+		groundBody = world->CreateBody(&groundBodyDef);
+
 		// +++ Add rope spritesheet to layer
 		ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"rope.png" ];
 		[self addChild:ropeSpriteSheet];
@@ -98,18 +95,26 @@ enum {
 		
 		
 		//Set up sprite
+        anchors = [[NSMutableArray alloc] initWithCapacity:4];
+
 		
-		CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"blocks.png" capacity:150];
-		[self addChild:batch z:0 tag:kTagBatchNode];
-		
-		[self addNewSpriteWithCoords:ccp(screenSize.width/2, screenSize.height/2)];
-		
-		CCLabelTTF *label = [CCLabelTTF labelWithString:@"Tap screen" fontName:@"Marker Felt" fontSize:32];
-		[self addChild:label z:0];
-		[label setColor:ccc3(0,0,255)];
-		label.position = ccp( screenSize.width/2, screenSize.height-50);
-		
-		[self schedule: @selector(tick:)];
+        /*
+         for (int i=0; i<4; i++) {
+            [self addNewSpriteWithCoords:ccp(120.0f + (40*i), screenSize.height/2)];
+        }
+        */
+        
+        [self addNewSpriteWithCoords:ccp(120.0f, screenSize.height/2)];
+
+     /*   anchorBody = (b2Body*)[[anchors lastObject] pointerValue];
+        b2Vec2 force = b2Vec2(10, 15);
+        anchorBody->ApplyLinearImpulse(force, b2Vec2(320.0f, screenSize.height/2));
+       */ 
+
+
+        [self schedule: @selector(tick:)];
+
+        
 	}
 	return self;
 }
@@ -139,8 +144,16 @@ enum {
 
 -(void) addNewSpriteWithCoords:(CGPoint)p
 {
+    CGSize screenSize = [CCDirector sharedDirector].winSize;
+
+    for (int i=0; i<4; i++) {
+
+        p = CGPointMake(120.0f + (40*i), p.y);
+    anchorBodyDef.position.Set(p.x/PTM_RATIO,screenSize.height/PTM_RATIO*0.9f); //center body on screen
+    anchorBody = world->CreateBody(&anchorBodyDef);
+    
 	CCLOG(@"Add sprite %0.2f x %02.f",p.x,p.y);
-	CCSpriteBatchNode *batch = (CCSpriteBatchNode*) [self getChildByTag:kTagBatchNode];
+	/*CCSpriteBatchNode *batch = (CCSpriteBatchNode*) [self getChildByTag:kTagBatchNode];
 	
 	//We have a 64x64 sprite sheet with 4 different 32x32 images.  The following code is
 	//just randomly picking one of the images
@@ -149,6 +162,10 @@ enum {
 	CCSprite *sprite = [CCSprite spriteWithBatchNode:batch rect:CGRectMake(32 * idx,32 * idy,32,32)];
 	[batch addChild:sprite];
 	
+    */
+    
+    CCSprite *sprite = [CCSprite spriteWithFile:@"acorn.png"];
+	[self addChild:sprite];
 	sprite.position = ccp( p.x, p.y);
 	
 	// Define the dynamic body.
@@ -159,16 +176,21 @@ enum {
 	bodyDef.position.Set(p.x/PTM_RATIO, p.y/PTM_RATIO);
 	bodyDef.userData = sprite;
 	b2Body *body = world->CreateBody(&bodyDef);
-	
+    [anchors addObject:[NSValue valueWithPointer:body]];
+
 	// Define another box shape for our dynamic body.
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(.5f, .5f);//These are mid points for our 1m box
+	//b2PolygonShape dynamicBox;
+	//dynamicBox.SetAsBox(.5f, .5f);//These are mid points for our 1m box
 	
+    b2CircleShape dynamicBox;
+    dynamicBox.m_radius = 18.0/PTM_RATIO;
+    
 	// Define the dynamic body fixture.
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &dynamicBox;	
 	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
+	fixtureDef.friction = 0.1f;
+    fixtureDef.restitution = 1.0f;
 	body->CreateFixture(&fixtureDef);
 	
 	// +++ Create box2d joint
@@ -182,6 +204,8 @@ enum {
 	// +++ Create VRope with two b2bodies and pointer to spritesheet
 	VRope *newRope = [[VRope alloc] init:anchorBody body2:body spriteSheet:ropeSpriteSheet];
 	[vRopes addObject:newRope];
+    
+    }
 }
 
 -(void)removeRopes {
@@ -225,16 +249,64 @@ enum {
 	
 }
 
+- (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (mouseJoint != nil) return;
+    
+    UITouch *myTouch = [touches anyObject];
+    CGPoint location = [myTouch locationInView:[myTouch view]];
+    location = [[CCDirector sharedDirector] convertToGL:location];
+    b2Vec2 locationWorld = b2Vec2(location.x/PTM_RATIO, location.y/PTM_RATIO);
+    
+    bulletBody = (b2Body*)[[anchors objectAtIndex:0] pointerValue];
+    bulletBody2 = (b2Body*)[[anchors lastObject] pointerValue];
+  	//CCLOG(@"Body2bulletBody2bulletBody2 %0.2f x %02.f",bulletBody2->GetWorldCenter().x , bulletBody2->GetWorldCenter().y);
+  	//CCLOG(@"11111111111111111111111 %0.2f x %02.f",bulletBody->GetWorldCenter().x , bulletBody2->GetWorldCenter().y);
+
+
+    if (locationWorld.x > bulletBody2->GetWorldCenter().x - 50.0/PTM_RATIO)
+    {
+        b2MouseJointDef md;
+        md.bodyA = groundBody;
+        md.bodyB = bulletBody2;
+        md.target = locationWorld;
+        md.maxForce = 2000;
+        
+        mouseJoint = (b2MouseJoint *)world->CreateJoint(&md);
+    } else if (locationWorld.x < bulletBody->GetWorldCenter().x + 50.0/PTM_RATIO)
+    {
+        b2MouseJointDef md;
+        md.bodyA = groundBody;
+        md.bodyB = bulletBody;
+        md.target = locationWorld;
+        md.maxForce = 2000;
+        
+        mouseJoint = (b2MouseJoint *)world->CreateJoint(&md);
+    }
+
+    //[[SimpleAudioEngine sharedEngine] playEffect: @"wood.wav"];
+    
+}
+
+- (void)ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (mouseJoint == nil) return;
+    
+    UITouch *myTouch = [touches anyObject];
+    CGPoint location = [myTouch locationInView:[myTouch view]];
+    location = [[CCDirector sharedDirector] convertToGL:location];
+    b2Vec2 locationWorld = b2Vec2(location.x/PTM_RATIO, location.y/PTM_RATIO);
+    
+    mouseJoint->SetTarget(locationWorld);
+}
+
 - (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	//Add a new body/atlas sprite at the touched location
-	for( UITouch *touch in touches ) {
-		CGPoint location = [touch locationInView: [touch view]];
-		
-		location = [[CCDirector sharedDirector] convertToGL: location];
-		
-		[self addNewSpriteWithCoords: location];
-	}
+    if (mouseJoint != nil)
+    {
+        world->DestroyJoint(mouseJoint);
+        mouseJoint = nil;
+    }
 }
 
 - (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration

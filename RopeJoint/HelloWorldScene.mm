@@ -1,14 +1,14 @@
 //
-//  HelloWorldLayer.mm
-//  RopeJoint
+//  HelloWorldScene.mm
+//  verletRopeTestProject
 //
-//  Created by Saida Memon on 3/2/12.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
+//  Created by patrick on 29/10/2010.
+//  Copyright __MyCompanyName__ 2010. All rights reserved.
 //
 
 
 // Import the interfaces
-#import "HelloWorldLayer.h"
+#import "HelloWorldScene.h"
 
 //Pixel to metres ratio. Box2D uses metres as the unit for measurement.
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
@@ -24,8 +24,8 @@ enum {
 };
 
 
-// HelloWorldLayer implementation
-@implementation HelloWorldLayer
+// HelloWorld implementation
+@implementation HelloWorld
 
 +(id) scene
 {
@@ -33,7 +33,7 @@ enum {
 	CCScene *scene = [CCScene node];
 	
 	// 'layer' is an autorelease object.
-	HelloWorldLayer *layer = [HelloWorldLayer node];
+	HelloWorld *layer = [HelloWorld node];
 	
 	// add layer as a child to scene
 	[scene addChild: layer];
@@ -75,17 +75,18 @@ enum {
 		
 		uint32 flags = 0;
 		flags += b2DebugDraw::e_shapeBit;
-        //		flags += b2DebugDraw::e_jointBit;
-        //		flags += b2DebugDraw::e_aabbBit;
-        //		flags += b2DebugDraw::e_pairBit;
-        //		flags += b2DebugDraw::e_centerOfMassBit;
+//		flags += b2DebugDraw::e_jointBit;
+//		flags += b2DebugDraw::e_aabbBit;
+//		flags += b2DebugDraw::e_pairBit;
+//		flags += b2DebugDraw::e_centerOfMassBit;
 		m_debugDraw->SetFlags(flags);		
 		
 		
 		// Define the ground body.
 		b2BodyDef groundBodyDef;
 		groundBodyDef.position.Set(0, 0); // bottom-left corner
-        
+		
+
 		// +++ Add anchor body
 		b2BodyDef anchorBodyDef;
 		anchorBodyDef.position.Set(screenSize.width/PTM_RATIO/2,screenSize.height/PTM_RATIO*0.7f); //center body on screen
@@ -110,6 +111,48 @@ enum {
 		label.position = ccp( screenSize.width/2, screenSize.height-50);
 		
 		[self schedule: @selector(tick:)];
+        
+        
+        b2BodyDef _titleBodyDef;
+        
+        _titleBodyDef.type = b2_dynamicBody;
+        _titleBodyDef.position.Set(250/PTM_RATIO, 225/PTM_RATIO);
+        _titleBodyDef.userData = label;
+        b2Body *_titleBody = world->CreateBody(&_titleBodyDef);
+        
+        b2CircleShape _circle;
+        _circle.m_radius = 18.0/PTM_RATIO;
+        
+        b2Fixture *_titleFixture;
+        b2FixtureDef _titleShapeDef;
+        _titleShapeDef.shape = &_circle;
+        _titleShapeDef.density = 1.0f;
+        _titleShapeDef.friction = 0.2f;
+        _titleShapeDef.restitution = 0.0f;
+        _titleFixture = _titleBody->CreateFixture(&_titleShapeDef);
+        
+        // +++ Add anchor body
+        //b2BodyDef anchorBodyDef;
+        anchorBodyDef.position.Set(160/PTM_RATIO, 400/PTM_RATIO); //center body on screen
+        anchorBody = world->CreateBody(&anchorBodyDef);
+        // +++ Add rope spritesheet to layer
+        ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"rope.png" ];
+        [self addChild:ropeSpriteSheet];
+        // +++ Init array that will hold references to all our ropes
+        vRopes = [[NSMutableArray alloc] init];
+        
+        // +++ Create box2d joint
+        b2RopeJointDef jd;
+        jd.bodyA=anchorBody; //define bodies
+        jd.bodyB=_titleBody;
+        jd.localAnchorA = b2Vec2(0,0); //define anchors
+        jd.localAnchorB = b2Vec2(0,0);
+        jd.maxLength= (_titleBody->GetPosition() - anchorBody->GetPosition()).Length(); //define max length of joint = current distance between bodies
+        world->CreateJoint(&jd); //create joint
+        // +++ Create VRope
+        VRope *newRope = [[VRope alloc] init:anchorBody body2:_titleBody spriteSheet:ropeSpriteSheet];
+        [vRopes addObject:newRope];
+
 	}
 	return self;
 }
@@ -155,7 +198,7 @@ enum {
 	//Set up a 1m squared box in the physics world
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
-    
+
 	bodyDef.position.Set(p.x/PTM_RATIO, p.y/PTM_RATIO);
 	bodyDef.userData = sprite;
 	b2Body *body = world->CreateBody(&bodyDef);
@@ -205,7 +248,7 @@ enum {
 	// Instruct the world to perform a single step of simulation. It is
 	// generally best to keep the time step and iterations fixed.
 	world->Step(dt, velocityIterations, positionIterations);
-    
+
 	
 	//Iterate over the bodies in the physics world
 	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext())
@@ -265,7 +308,7 @@ enum {
 	world = NULL;
 	
 	delete m_debugDraw;
-    
+
 	// don't forget to call "super dealloc"
 	[super dealloc];
 }

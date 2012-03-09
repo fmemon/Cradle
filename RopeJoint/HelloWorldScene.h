@@ -1,9 +1,9 @@
 //
-//  HelloWorldLayer.h
-//  RopeJoint
+//  HelloWorldScene.h
+//  verletRopeTestProject
 //
-//  Created by Saida Memon on 3/2/12.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
+//  Created by patrick on 29/10/2010.
+//  Copyright __MyCompanyName__ 2010. All rights reserved.
 //
 
 
@@ -13,8 +13,8 @@
 #import "GLES-Render.h"
 #import "VRope.h"
 
-// HelloWorldLayer
-@interface HelloWorldLayer : CCLayer
+// HelloWorld Layer
+@interface HelloWorld : CCLayer
 {
 	b2World* world;
 	GLESDebugDraw *m_debugDraw;
