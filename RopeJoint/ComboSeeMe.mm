@@ -110,8 +110,8 @@ enum {
         //Circles
         //circle2
         CCSprite *ball = [CCSprite spriteWithFile:@"Ball.png"];
-        [self addChild:ball z:1];
-        bodyDef.userData = ball;
+        //[self addChild:ball];
+        //bodyDef.userData = ball;
         bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(0.468085f, 9.574468f);
         bodyDef.angle = 0.000000f;
@@ -131,19 +131,20 @@ enum {
 
         ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"rope.png" ];
 		[self addChild:ropeSpriteSheet];
+    
         
         //paddle code
         // Create paddle and add it to the layer
         CCSprite *paddle = [CCSprite spriteWithFile:@"Paddle.png"];
-        paddle.position = ccp(screenSize.width/2, 50);
+        paddle.position = ccp(screenSize.width/2, 50/PTM_RATIO);
         [self addChild:paddle];
         
         // Create paddle body
         b2BodyDef paddleBodyDef;
-        //paddleBodyDef.type = b2_dynamicBody;
+        paddleBodyDef.userData = paddle;
         paddleBodyDef.type = b2_staticBody;
         paddleBodyDef.position.Set(screenSize.width/2/PTM_RATIO, 50/PTM_RATIO);
-        paddleBodyDef.userData = paddle;
+        //paddleBodyDef.userData = paddle;
         _paddleBody = world->CreateBody(&paddleBodyDef);
         
         // Create paddle shape
@@ -161,56 +162,38 @@ enum {
         paddleShapeDef.filter.maskBits = uint16(65535);
         _paddleFixture = _paddleBody->CreateFixture(&paddleShapeDef);
         
-        // Restrict paddle along the x axis
-        b2PrismaticJointDef pjointDef;
-        b2Vec2 worldAxis(1.0f, 0.0f);
-        pjointDef.collideConnected = true;
-        pjointDef.Initialize(_paddleBody, ground,_paddleBody->GetWorldCenter(), worldAxis);
-        world->CreateJoint(&pjointDef);
-        
-        //static body 4
+         
+       //static body 4
         b2PolygonShape shape;
+        bodyDef1.type = b2_staticBody;
         bodyDef1.position.Set(screenSize.width/2/PTM_RATIO, 50/PTM_RATIO);
-        bodyDef1.angle = 0.020196f;
         b2Body* staticBody4 = world->CreateBody(&bodyDef1);
-        initVel.Set(0.000000f, 0.000000f);
-        staticBody4->SetLinearVelocity(initVel);
-        staticBody4->SetAngularVelocity(0.000000f);
-        b2Vec2 staticBody4_vertices[4];
-        staticBody4_vertices[0].Set(-1.723404f, -0.404255f);
-        staticBody4_vertices[1].Set(1.723404f, -0.404255f);
-        staticBody4_vertices[2].Set(1.723404f, 0.404255f);
-        staticBody4_vertices[3].Set(-1.723404f, 0.404255f);
-        shape.Set(staticBody4_vertices, 4);
+        shape.SetAsBox(paddle.contentSize.width/PTM_RATIO/2, paddle.contentSize.height/PTM_RATIO/2);
         fd.shape = &shape;
-        fd.density = 1.0f;
-        fd.friction = 0.0f;
-        fd.restitution = 0.25f;        
+        fd.density = 0.915000f;
+        fd.friction = 0.0300000f;
+        fd.restitution = 0.600000f;        
         fd.filter.groupIndex = int16(0);
         fd.filter.categoryBits = uint16(65535);
         fd.filter.maskBits = uint16(65535);
-        staticBody4->CreateFixture(&shape,0);
-        
+        staticBody4->CreateFixture(&fd);
         
          // +++ Add rope spritesheet to layer
          ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"rope.png" ];
          [self addChild:ropeSpriteSheet];
+        
          // +++ Init array that will hold references to all our ropes
          vRopes = [[NSMutableArray alloc] init];
         
         // +++ Create box2d joint
         b2RopeJointDef rjd;
-        //rjd.bodyA=_paddleBody; //define bodies
         rjd.bodyA=staticBody4; //define bodies
         rjd.bodyB=circle2;
         rjd.localAnchorA = b2Vec2(0,0); //define anchors
         rjd.localAnchorB = b2Vec2(0,0);
-       // rjd.maxLength= (circle2->GetPosition() - _paddleBody->GetPosition()).Length(); //define max length of joint = current distance between bodies
         rjd.maxLength= (circle2->GetPosition() - staticBody4->GetPosition()).Length(); //define max length of joint = current distance between bodies
 
         world->CreateJoint(&rjd); //create joint
-        // +++ Create VRope
-        //VRope *newRope = [[VRope alloc] init:_paddleBody body2:circle2 spriteSheet:ropeSpriteSheet];
         VRope *newRope = [[VRope alloc] init:staticBody4 body2:circle2 spriteSheet:ropeSpriteSheet];
         [vRopes addObject:newRope];
         
@@ -239,9 +222,7 @@ enum {
 	for(uint i=0;i<[vRopes count];i++) {
 		[[vRopes objectAtIndex:i] updateSprites];
 	}
-	
 }
-
 
 -(void) tick: (ccTime) dt
 {
