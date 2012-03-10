@@ -10,6 +10,15 @@
 		65137077150A9C3B0070FC59 /* AcornCradle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65137076150A9C3B0070FC59 /* AcornCradle.mm */; };
 		6513707C150A9D040070FC59 /* InterfaceSounds.m in Sources */ = {isa = PBXBuildFile; fileRef = 6513707B150A9D040070FC59 /* InterfaceSounds.m */; };
 		6513707E150A9D400070FC59 /* wood.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6513707D150A9D400070FC59 /* wood.wav */; };
+		65A1C53C150B0A950023A7EC /* Breakout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65A1C53B150B0A950023A7EC /* Breakout.mm */; };
+		65A1C544150B0AAC0023A7EC /* Ball.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A1C53E150B0AAC0023A7EC /* Ball.png */; };
+		65A1C545150B0AAC0023A7EC /* blip.caf in Resources */ = {isa = PBXBuildFile; fileRef = 65A1C53F150B0AAC0023A7EC /* blip.caf */; };
+		65A1C546150B0AAC0023A7EC /* Block.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A1C540150B0AAC0023A7EC /* Block.png */; };
+		65A1C547150B0AAC0023A7EC /* blocker_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = 65A1C541150B0AAC0023A7EC /* blocker_hit.wav */; };
+		65A1C548150B0AAC0023A7EC /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A1C542150B0AAC0023A7EC /* blocks.png */; };
+		65A1C549150B0AAC0023A7EC /* Paddle.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A1C543150B0AAC0023A7EC /* Paddle.png */; };
+		65A1C54B150B146F0023A7EC /* Combo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65A1C54A150B146E0023A7EC /* Combo.mm */; };
+		65A1C557150B20CE0023A7EC /* ComboSeeMe.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65A1C556150B20CE0023A7EC /* ComboSeeMe.mm */; };
 		65D28948150AB18800C172BA /* NewCradle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65D28947150AB18800C172BA /* NewCradle.mm */; };
 		65D2894A150AB75500C172BA /* acorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 65D28949150AB75500C172BA /* acorn.png */; };
 		65EEDFEB15008BC600EA6B76 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EEDFEA15008BC600EA6B76 /* QuartzCore.framework */; };
@@ -184,6 +193,18 @@
 		6513707A150A9D040070FC59 /* InterfaceSounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterfaceSounds.h; sourceTree = "<group>"; };
 		6513707B150A9D040070FC59 /* InterfaceSounds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterfaceSounds.m; sourceTree = "<group>"; };
 		6513707D150A9D400070FC59 /* wood.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wood.wav; sourceTree = "<group>"; };
+		65A1C53A150B0A950023A7EC /* Breakout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakout.h; sourceTree = "<group>"; };
+		65A1C53B150B0A950023A7EC /* Breakout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Breakout.mm; sourceTree = "<group>"; };
+		65A1C53E150B0AAC0023A7EC /* Ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Ball.png; sourceTree = "<group>"; };
+		65A1C53F150B0AAC0023A7EC /* blip.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = blip.caf; sourceTree = "<group>"; };
+		65A1C540150B0AAC0023A7EC /* Block.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Block.png; sourceTree = "<group>"; };
+		65A1C541150B0AAC0023A7EC /* blocker_hit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = blocker_hit.wav; sourceTree = "<group>"; };
+		65A1C542150B0AAC0023A7EC /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blocks.png; sourceTree = "<group>"; };
+		65A1C543150B0AAC0023A7EC /* Paddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Paddle.png; sourceTree = "<group>"; };
+		65A1C54A150B146E0023A7EC /* Combo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Combo.mm; sourceTree = "<group>"; };
+		65A1C54C150B147B0023A7EC /* Combo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Combo.h; sourceTree = "<group>"; };
+		65A1C555150B20BB0023A7EC /* ComboSeeMe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComboSeeMe.h; sourceTree = "<group>"; };
+		65A1C556150B20CE0023A7EC /* ComboSeeMe.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ComboSeeMe.mm; sourceTree = "<group>"; };
 		65D28945150AB17800C172BA /* NewCradle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewCradle.h; sourceTree = "<group>"; };
 		65D28947150AB18800C172BA /* NewCradle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NewCradle.mm; sourceTree = "<group>"; };
 		65D28949150AB75500C172BA /* acorn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = acorn.png; sourceTree = "<group>"; };
@@ -576,6 +597,12 @@
 		65EEDFFA15008BC600EA6B76 /* RopeJoint */ = {
 			isa = PBXGroup;
 			children = (
+				65A1C555150B20BB0023A7EC /* ComboSeeMe.h */,
+				65A1C556150B20CE0023A7EC /* ComboSeeMe.mm */,
+				65A1C54C150B147B0023A7EC /* Combo.h */,
+				65A1C54A150B146E0023A7EC /* Combo.mm */,
+				65A1C53A150B0A950023A7EC /* Breakout.h */,
+				65A1C53B150B0A950023A7EC /* Breakout.mm */,
 				65D28945150AB17800C172BA /* NewCradle.h */,
 				65D28947150AB18800C172BA /* NewCradle.mm */,
 				65137079150A9C490070FC59 /* AcornCradle.h */,
@@ -610,6 +637,12 @@
 		65EEDFFB15008BC600EA6B76 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				65A1C53E150B0AAC0023A7EC /* Ball.png */,
+				65A1C53F150B0AAC0023A7EC /* blip.caf */,
+				65A1C540150B0AAC0023A7EC /* Block.png */,
+				65A1C541150B0AAC0023A7EC /* blocker_hit.wav */,
+				65A1C542150B0AAC0023A7EC /* blocks.png */,
+				65A1C543150B0AAC0023A7EC /* Paddle.png */,
 				65D28949150AB75500C172BA /* acorn.png */,
 				6513707D150A9D400070FC59 /* wood.wav */,
 				65EEDFFC15008BC600EA6B76 /* Default.png */,
@@ -1144,6 +1177,12 @@
 				65EEE38B1500919E00EA6B76 /* rope.png in Resources */,
 				6513707E150A9D400070FC59 /* wood.wav in Resources */,
 				65D2894A150AB75500C172BA /* acorn.png in Resources */,
+				65A1C544150B0AAC0023A7EC /* Ball.png in Resources */,
+				65A1C545150B0AAC0023A7EC /* blip.caf in Resources */,
+				65A1C546150B0AAC0023A7EC /* Block.png in Resources */,
+				65A1C547150B0AAC0023A7EC /* blocker_hit.wav in Resources */,
+				65A1C548150B0AAC0023A7EC /* blocks.png in Resources */,
+				65A1C549150B0AAC0023A7EC /* Paddle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1302,6 +1341,9 @@
 				65137077150A9C3B0070FC59 /* AcornCradle.mm in Sources */,
 				6513707C150A9D040070FC59 /* InterfaceSounds.m in Sources */,
 				65D28948150AB18800C172BA /* NewCradle.mm in Sources */,
+				65A1C53C150B0A950023A7EC /* Breakout.mm in Sources */,
+				65A1C54B150B146F0023A7EC /* Combo.mm in Sources */,
+				65A1C557150B20CE0023A7EC /* ComboSeeMe.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1311,7 +1353,10 @@
 		65EEE1CE15008BCC00EA6B76 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv6,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1323,7 +1368,7 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1331,14 +1376,17 @@
 		65EEE1CF15008BCC00EA6B76 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv6,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 			};

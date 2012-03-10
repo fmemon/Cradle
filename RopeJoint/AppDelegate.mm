@@ -14,6 +14,9 @@
 #import "RootViewController.h"
 #import "AcornCradle.h"
 #import "NewCradle.h"
+#import "Breakout.h"
+#import "Combo.h"
+#import "ComboSeeMe.h"
 
 @implementation AppDelegate
 
@@ -111,7 +114,7 @@
 	[self removeStartupFlicker];
 	
 	// Run the intro Scene
-	[[CCDirector sharedDirector] runWithScene: [NewCradle scene]];		
+	[[CCDirector sharedDirector] runWithScene: [ComboSeeMe scene]];		
 }
 
 

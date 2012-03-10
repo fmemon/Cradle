@@ -1,5 +1,5 @@
 //
-//  NewCradleScene.mm
+//  ComboScene.mm
 //  verletRopeTestProject
 //
 //  Created by patrick on 29/10/2010.
@@ -8,7 +8,7 @@
 
 
 // Import the interfaces
-#import "NewCradle.h"
+#import "Combo.h"
 
 //Pixel to metres ratio. Box2D uses metres as the unit for measurement.
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
@@ -24,8 +24,8 @@ enum {
 };
 
 
-// NewCradle implementation
-@implementation NewCradle
+// Combo implementation
+@implementation Combo
 
 +(id) scene
 {
@@ -33,7 +33,7 @@ enum {
 	CCScene *scene = [CCScene node];
 	
 	// 'layer' is an autorelease object.
-	NewCradle *layer = [NewCradle node];
+	Combo *layer = [Combo node];
 	
 	// add layer as a child to scene
 	[scene addChild: layer];
@@ -68,12 +68,12 @@ enum {
 		world = new b2World(gravity, doSleep);
 		
 		world->SetContinuousPhysics(true);
-				
+        
 		// Define the ground body.
 		b2BodyDef groundBodyDef;
 		groundBodyDef.position.Set(0, 0); // bottom-left corner
 		groundBody = world->CreateBody(&groundBodyDef);
-
+        
 		// +++ Add rope spritesheet to layer
 		ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"rope.png" ];
 		[self addChild:ropeSpriteSheet];
@@ -84,13 +84,121 @@ enum {
 		//Set up sprite
         anchors = [[NSMutableArray alloc] initWithCapacity:4];
         
-        [self addNewSpriteWithCoords:ccp(120.0f, screenSize.height/2)];
+       // [self addNewSpriteWithCoords:ccp(120.0f, screenSize.height/2)];
+        CGPoint p = CGPointMake(120.0f + (40*0), p.y);
+        anchorBodyDef.position.Set(p.x/PTM_RATIO,screenSize.height/PTM_RATIO*0.9f); //center body on screen
+        anchorBody = world->CreateBody(&anchorBodyDef);
+        
+        /*   anchorBody = (b2Body*)[[anchors lastObject] pointerValue];
+         b2Vec2 force = b2Vec2(10, 15);
+         anchorBody->ApplyLinearImpulse(force, b2Vec2(320.0f, screenSize.height/2));
+         */ 
+        
+        
+        // Create edges around the entire screen
+        groundBodyDef.position.Set(0,0);
+        groundBody = world->CreateBody(&groundBodyDef);
+        b2EdgeShape groundBox;      
+        b2FixtureDef groundBoxDef;
+        groundBoxDef.shape = &groundBox;
+        groundBox.Set(b2Vec2(0,0), b2Vec2(screenSize.width/PTM_RATIO, 0));
+        _bottomFixture = groundBody->CreateFixture(&groundBoxDef);
+        groundBox.Set(b2Vec2(0,0), b2Vec2(0, screenSize.height/PTM_RATIO));
+        groundBody->CreateFixture(&groundBoxDef);
+        groundBox.Set(b2Vec2(0, screenSize.height/PTM_RATIO), b2Vec2(screenSize.width/PTM_RATIO, 
+                                                                  screenSize.height/PTM_RATIO));
+        groundBody->CreateFixture(&groundBoxDef);
+        groundBox.Set(b2Vec2(screenSize.width/PTM_RATIO, screenSize.height/PTM_RATIO), 
+                      b2Vec2(screenSize.width/PTM_RATIO, 0));
+        groundBody->CreateFixture(&groundBoxDef);
+        
+        
+        
+		// +++ Add rope spritesheet to layer
+		ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"rope.png" ];
+		[self addChild:ropeSpriteSheet];
+        
+        // Create sprite and add it to the layer
+        CCSprite *ball = [CCSprite spriteWithFile:@"Ball.png" 
+                                             rect:CGRectMake(0, 0, 52, 52)];
+        ball.position = ccp(100, 100);
+        ball.tag = 1;
+        [self addChild:ball];
+        
+        
+        // Create ball body 
+        b2BodyDef ballBodyDef;
+        ballBodyDef.type = b2_dynamicBody;
+        ballBodyDef.position.Set(100/PTM_RATIO, 100/PTM_RATIO);
+        ballBodyDef.userData = ball;
+        ballBody = world->CreateBody(&ballBodyDef);
+        
+        // Create circle shape
+        b2CircleShape circle;
+        circle.m_radius = 26.0/PTM_RATIO;
+        
+        // Create shape definition and add to body
+        b2FixtureDef ballShapeDef;
+        ballShapeDef.shape = &circle;
+        ballShapeDef.density = 1.0f;
+        ballShapeDef.friction = 0.f;
+        ballShapeDef.restitution = 1.0f;
+        _ballFixture = ballBody->CreateFixture(&ballShapeDef);
+        
+        
+        b2Vec2 force = b2Vec2(10, 10);
+        ballBody->ApplyLinearImpulse(force, ballBodyDef.position);
+        
+        // Create paddle and add it to the layer
+        CCSprite *paddle = [CCSprite spriteWithFile:@"Paddle.png"];
+        paddle.position = ccp(screenSize.width/2, 50);
+        [self addChild:paddle];
+        
+        // Create paddle body
+        b2BodyDef paddleBodyDef;
+        //paddleBodyDef.type = b2_dynamicBody;
+        paddleBodyDef.type = b2_staticBody;
+        paddleBodyDef.position.Set(screenSize.width/2/PTM_RATIO, 50/PTM_RATIO);
+        paddleBodyDef.userData = paddle;
+        _paddleBody = world->CreateBody(&paddleBodyDef);
+        
+        // Create paddle shape
+        b2PolygonShape paddleShape;
+        paddleShape.SetAsBox(paddle.contentSize.width/PTM_RATIO/2, 
+                             paddle.contentSize.height/PTM_RATIO/2);
+        
+        // Create shape definition and add to body
+        b2FixtureDef paddleShapeDef;
+        paddleShapeDef.shape = &paddleShape;
+        paddleShapeDef.density = 10.0f;
+        paddleShapeDef.friction = 0.4f;
+        paddleShapeDef.restitution = 0.1f;
+        _paddleFixture = _paddleBody->CreateFixture(&paddleShapeDef);
+        
+        // Restrict paddle along the x axis
+        b2PrismaticJointDef jointDef;
+        b2Vec2 worldAxis(1.0f, 0.0f);
+        jointDef.collideConnected = true;
+        jointDef.Initialize(_paddleBody, groundBody, 
+                            _paddleBody->GetWorldCenter(), worldAxis);
+        world->CreateJoint(&jointDef);
+       
+        
+        //connect paddle to bouncing ball
+        // +++ Create box2d joint
+        jd.bodyA=anchorBody; //define bodies
+        jd.bodyB=ballBody;
+        jd.localAnchorA = b2Vec2(0,0); //define anchors
+        jd.localAnchorB = b2Vec2(0,0);
+        jd.maxLength= (ballBody->GetPosition() - anchorBody->GetPosition()).Length(); //max joint = current distance between bodies
+        CCLOG(@"jd.maxLengthjd.maxLength %0.2f",jd.maxLength);
 
-     /*   anchorBody = (b2Body*)[[anchors lastObject] pointerValue];
-        b2Vec2 force = b2Vec2(10, 15);
-        anchorBody->ApplyLinearImpulse(force, b2Vec2(320.0f, screenSize.height/2));
-       */ 
-
+        world->CreateJoint(&jd); //create joint
+        // +++ Create VRope with two b2bodies and pointer to spritesheet
+        newRope = [[VRope alloc] init:_paddleBody body2:ballBody spriteSheet:ropeSpriteSheet];
+        [vRopes addObject:newRope];
+        
+        
         [self schedule: @selector(tick:)];
 	}
 	return self;
@@ -122,50 +230,46 @@ enum {
 -(void) addNewSpriteWithCoords:(CGPoint)p
 {
     CGSize screenSize = [CCDirector sharedDirector].winSize;
-
+    
     for (int i=0; i<4; i++) {
-
+        
         p = CGPointMake(120.0f + (40*i), p.y);
         anchorBodyDef.position.Set(p.x/PTM_RATIO,screenSize.height/PTM_RATIO*0.9f); //center body on screen
         anchorBody = world->CreateBody(&anchorBodyDef);
-    
+        
         CCLOG(@"Add sprite %0.2f x %02.f",p.x,p.y);
-    
-        CCSprite *sprite = [CCSprite spriteWithFile:@"acorn.png"];
+        
+        sprite = [CCSprite spriteWithFile:@"acorn.png"];
         [self addChild:sprite];
         sprite.position = ccp( p.x, p.y);
-	
+        
         // Define the dynamic body.
         //Set up a 1m squared box in the physics world
-        b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
-    
+        
         bodyDef.position.Set(p.x/PTM_RATIO, p.y/PTM_RATIO);
         bodyDef.userData = sprite;
-        b2Body *body = world->CreateBody(&bodyDef);
+        body = world->CreateBody(&bodyDef);
         [anchors addObject:[NSValue valueWithPointer:body]];
-
-        b2CircleShape dynamicBox;
+        
         dynamicBox.m_radius = 18.0/PTM_RATIO;
-    
+        
         // Define the dynamic body fixture.
-        b2FixtureDef fixtureDef;
         fixtureDef.shape = &dynamicBox;	
         fixtureDef.density = 1.0f;
         fixtureDef.friction = 0.1f;
         fixtureDef.restitution = 1.0f;
         body->CreateFixture(&fixtureDef);
-	
+        
         // +++ Create box2d joint
-        b2RopeJointDef jd;
         jd.bodyA=anchorBody; //define bodies
         jd.bodyB=body;
-        jd.localAnchorA = b2Vec2(0,0); //define anchors
-        jd.localAnchorB = b2Vec2(0,0);
-        jd.maxLength= (body->GetPosition() - anchorBody->GetPosition()).Length(); //define max length of joint = current distance between bodies
+        jd.localAnchorA = b2Vec2(0,10); //define anchors
+        jd.localAnchorB = b2Vec2(0,10);
+        jd.maxLength= -2.0f; //define max length of joint = current distance between bodies
         world->CreateJoint(&jd); //create joint
         // +++ Create VRope with two b2bodies and pointer to spritesheet
-        VRope *newRope = [[VRope alloc] init:anchorBody body2:body spriteSheet:ropeSpriteSheet];
+        newRope = [[VRope alloc] init:anchorBody body2:body spriteSheet:ropeSpriteSheet];
         [vRopes addObject:newRope];
     }
 }
@@ -221,12 +325,13 @@ enum {
     location = [[CCDirector sharedDirector] convertToGL:location];
     b2Vec2 locationWorld = b2Vec2(location.x/PTM_RATIO, location.y/PTM_RATIO);
     
+  /*
     bulletBody = (b2Body*)[[anchors objectAtIndex:0] pointerValue];
     bulletBody2 = (b2Body*)[[anchors lastObject] pointerValue];
   	//CCLOG(@"Body2bulletBody2bulletBody2 %0.2f x %02.f",bulletBody2->GetWorldCenter().x , bulletBody2->GetWorldCenter().y);
   	//CCLOG(@"11111111111111111111111 %0.2f x %02.f",bulletBody->GetWorldCenter().x , bulletBody2->GetWorldCenter().y);
-
-
+    
+   
     if (locationWorld.x > bulletBody2->GetWorldCenter().x - 50.0/PTM_RATIO)
     {
         b2MouseJointDef md;
@@ -246,11 +351,25 @@ enum {
         
         mouseJoint = (b2MouseJoint *)world->CreateJoint(&md);
     }
-
+    */
     //[[SimpleAudioEngine sharedEngine] playEffect: @"wood.wav"];
-    
+ 
+    /*
+    if (_paddleFixture->TestPoint(locationWorld)) {
+        b2MouseJointDef md;
+        md.bodyA = ballBody;
+        md.bodyB = _paddleBody;
+        md.target = locationWorld;
+        md.collideConnected = true;
+        md.maxForce = 1000.0f * _paddleBody->GetMass();
+        
+        _mouseJoint = (b2MouseJoint *)world->CreateJoint(&md);
+        _paddleBody->SetAwake(true);
+    }
+     */
 }
 
+/*
 - (void)ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
     if (mouseJoint == nil) return;
@@ -270,6 +389,27 @@ enum {
         world->DestroyJoint(mouseJoint);
         mouseJoint = nil;
     }
+}
+ */
+-(void)ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    if (_mouseJoint == NULL) return;
+    
+    UITouch *myTouch = [touches anyObject];
+    CGPoint location = [myTouch locationInView:[myTouch view]];
+    location = [[CCDirector sharedDirector] convertToGL:location];
+    b2Vec2 locationWorld = b2Vec2(location.x/PTM_RATIO, location.y/PTM_RATIO);
+    
+    _mouseJoint->SetTarget(locationWorld);
+    
+}
+-(void)ccTouchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    if (_mouseJoint) {
+        world->DestroyJoint(_mouseJoint);
+        _mouseJoint = NULL;
+    }
+    
 }
 
 - (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration
