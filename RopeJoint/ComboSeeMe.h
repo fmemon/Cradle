@@ -44,26 +44,7 @@
     b2FixtureDef fixtureDef;
     b2MouseJoint *_mouseJoint;
 
- /*   
-    
-    //NewCradle
-    b2Body* anchorBody; //reference to anchor body
-	CCSpriteBatchNode* ropeSpriteSheet; //sprite sheet for rope segment
-    b2BodyDef anchorBodyDef;
-    
-    NSMutableArray *anchors;
-    
-	b2Body* bulletBody;
-    b2Body* bulletBody2; //reference to anchor body
-    b2Body *groundBody;
-    
-    
-    b2Fixture *armFixture;
-    b2Body *armBody;
-    b2RevoluteJoint *armJoint;
-    b2WeldJoint *bulletJoint;
-    b2MouseJoint *_mouseJoint;
-*/
+
     //2 circles
     b2Body* anchorBody; //reference to anchor body
 
