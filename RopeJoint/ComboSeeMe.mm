@@ -134,13 +134,18 @@ static inline float mtp(float d)
 
         
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"matty.plist"];
-        spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"matty.png"];
+        spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"matty2.png"];
         [self addChild:spriteSheet];
         sprite = [CCSprite spriteWithSpriteFrameName:@"blinker1sm.png"];     
         //sprite = [CCSprite spriteWithFile:@"blinkerc1.png"];     
         [self addChild:sprite z:1 tag:88];
         [sprite runAction:[self createBlinkAnim:YES]];
 
+        
+       
+        CCSprite *sprite2 = [CCSprite spriteWithFile:@"bg.png"];
+        sprite2.anchorPoint = CGPointZero;
+        [self addChild:sprite2 z:-11];
         
         //Circles
         //circle2
@@ -165,7 +170,7 @@ static inline float mtp(float d)
         _ballFixture = circle2->CreateFixture(&fd);
 
         // +++ Add rope spritesheet to layer
-        ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"rope.png" ];
+        ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"newrope.png" ];
         [self addChild:ropeSpriteSheet];
     
         
@@ -222,9 +227,55 @@ static inline float mtp(float d)
         [MusicHandler preload];
         //[MusicHandler notifyTargetHit];
 
+        //initialize the score
+        score  = 0;
+        highscore = 10;
+        
+        highscoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"HighScore: %i",highscore] fontName:@"Arial" fontSize:24];
+        highscoreLabel.color = ccc3(26, 46, 149);
+        highscoreLabel.position = ccp(380.0f, 300.0f);
+        [self addChild:highscoreLabel z:10];
+        
+        scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i",score] fontName:@"Arial" fontSize:24];
+        scoreLabel.position = ccp(380.0f, 280.0f);
+        scoreLabel.color = ccc3(26, 46, 149);
+        [self addChild:scoreLabel z:10];
+        
+        [self restoreData];
         
     }
     return self; 
+}
+
+- (void)updateScore {
+    score +=100;
+    [scoreLabel setString:[NSString stringWithFormat:@"Score: %i",score]];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setInteger:score forKey:@"score"];
+    [defaults synchronize];
+
+}
+- (void)saveData {   
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setInteger:highscore forKey:@"HS1"];
+    [defaults synchronize];
+}
+
+- (void)restoreData {
+    
+    // Get the stored data before the view loads
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    //NSString *winner1 = [defaults objectForKey:@"winner1"];
+    //NSString *winner2 = [defaults objectForKey:@"winner2"];
+    
+    if ([defaults integerForKey:@"HS1"]) {
+        highscore = [defaults integerForKey:@"HS1"];
+        [highscoreLabel setString:[NSString stringWithFormat:@"Score: %i",highscore]];
+    }
+
+
 }
 
 - (CCAction*)createBlinkAnim:(BOOL)isTarget {
@@ -347,12 +398,15 @@ static inline float mtp(float d)
                 //toDestroy.push_back(bodyA);
                 [MusicHandler playBounce];
                 [self callShattered:bodyB];
+                [self updateScore];
             } 
             // Is sprite A a car and sprite B a cat?  
             else if (spriteA.tag == 11 && spriteB.tag == 88 && !shattered) {
                 //toDestroy.push_back(bodyB);
                 [MusicHandler playBounce];
                 [self callShattered:bodyB];
+                [self updateScore];
+
             } 
         }  
         
@@ -370,12 +424,13 @@ static inline float mtp(float d)
                 if (contact.fixtureA == _bottomFixture  || contact.fixtureB == _bottomFixture) {
                     [MusicHandler playWater];
                     
-                   // GameOverScene *gameOverScene = [GameOverScene node];
-                   //[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1 scene:[GameOverScene node]]];
+                    if (score > highscore) {
+                        highscore = score;
+                        [self saveData];
+                    }
                     
-                    GameOverScene *gameOverScene = [GameOverScene node];
-                    [gameOverScene.layer.label setString:@"You Lose :["];
-                    [[CCDirector sharedDirector] replaceScene:gameOverScene];
+                    //GameOverScene *gameOverScene = [GameOverScene node];
+                    [[CCDirector sharedDirector] replaceScene:[GameOverScene node]];
                 }
                 else {
                     [MusicHandler playWall];

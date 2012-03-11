@@ -60,6 +60,11 @@
     NSArray *walls;
     BOOL shattered;
     CCSpriteBatchNode* spriteSheet;
+    
+    int score;
+    int highscore;
+    CCLabelTTF *highscoreLabel;
+    CCLabelTTF *scoreLabel;
 }
 
 // returns a CCScene that contains the ComboSeeMe as the only child
@@ -67,5 +72,8 @@
 - (CCAction*)createBlinkAnim:(BOOL)isTarget;
 - (void)resetShattered;
 - (void)callShattered:(b2Body*)bodyB;
+- (void)updateScore;
+- (void)saveData;
+- (void)restoreData;
 
 @end

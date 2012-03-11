@@ -8,18 +8,17 @@
 
 #import "cocos2d.h"
 
-@interface GameOverLayer : CCLayer {
-	CCLabelTTF *_label;
+@interface GameOverScene : CCLayer {
+	CCLabelTTF *winner1;
+    CCLabelTTF *winner2;
+    CCLabelTTF *winner3;
+	CCLabelTTF *HS1;
+    CCLabelTTF *HS2;
+    CCLabelTTF *HS3;
+
 }
 
-@property (nonatomic, retain) CCLabelTTF *label;
-
-@end
-
-@interface GameOverScene : CCScene {
-	GameOverLayer *_layer;
-}
-
-@property (nonatomic, retain) GameOverLayer *layer;
+- (void)restoreData;
++(id) scene;
 
 @end
