@@ -33,7 +33,7 @@
         [self addChild:sprite2 z:-11];
         
         HS1 = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32];
-        HS1.position = ccp(240.0f, 100.0f);
+        HS1.position = ccp(240.0f, 80.0f);
         HS1.color = ccc3(26, 46, 149);
         [self addChild:HS1];
         
@@ -51,17 +51,19 @@
 		tapLabel.position = ccp(240, 131.67f);        
 		[self addChild: tapLabel];
         
-		myText = [[UITextField alloc] initWithFrame:CGRectMake(50, 100, 300, 28)];
+		myText = [[UITextField alloc] initWithFrame:CGRectMake(300, 128, 150, 50)];
 		[myText setTextColor:[UIColor blackColor]];
-		[myText setTextAlignment:UITextAlignmentLeft];
-		[myText setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-		[myText setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
+		//[myText setTextAlignment:UITextAlignmentLeft];
+		//[myText setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+		//[myText setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
 		[myText setClearsOnBeginEditing:YES];
 		[myText setBorderStyle:UITextBorderStyleRoundedRect];
+        [myText setCenter:CGPointMake(280.0f, 80.0f)];
 		
 		[myText setDelegate:self];
 		[myText setReturnKeyType:UIReturnKeyDone];
 		[myText setAutocapitalizationType:UITextAutocapitalizationTypeWords];
+        [myText setTransform:CGAffineTransformMakeRotation((float)M_PI_2)];
 		[[[CCDirector sharedDirector] openGLView] addSubview: myText];
 
         
@@ -73,6 +75,8 @@
 - (BOOL)textFieldShouldReturn:(UITextField*)textField {
 	//Terminate editing 
 	[textField resignFirstResponder];  
+    [myText removeFromSuperview];
+
 	return YES; 
 } 
 
@@ -106,8 +110,8 @@
     }
     if ([defaults objectForKey:@"Winner1"]) {
         
-        NSString *won = [NSString stringWithFormat:@"winner: %@",[defaults objectForKey:@"Winner1"]];
-        [winner1 setString: won];
+      //  NSString *won = [NSString stringWithFormat:@"winner: %@",[defaults objectForKey:@"Winner1"]];
+        [winner1 setString: [defaults objectForKey:@"Winner1"]];
     }
 }
 
