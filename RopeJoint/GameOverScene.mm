@@ -32,27 +32,67 @@
         sprite2.anchorPoint = CGPointZero;
         [self addChild:sprite2 z:-11];
         
+        HS1 = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32];
+        HS1.position = ccp(240.0f, 100.0f);
+        HS1.color = ccc3(26, 46, 149);
+        [self addChild:HS1];
+        
         winner1 = [CCLabelTTF labelWithString:@"" fontName:@"Arial" fontSize:32];
-        winner1.position = ccp(240.0f, 240.0f);
+        winner1.position = ccp(240.0f, 140.0f);
         winner1.color = ccc3(26, 46, 149);
         [self addChild:winner1];
         
+        
         [self restoreData];
 
-        CCLabelTTF* label2 = [CCLabelTTF labelWithString:@"Tap to Restart"
+        tapLabel = [CCLabelTTF labelWithString:@"Tap to Restart"
                                                 fontName:@"Marker Felt"
                                                 fontSize:35];
-		label2.position = ccp(240, 131.67f);        
-		[self addChild: label2];
+		tapLabel.position = ccp(240, 131.67f);        
+		[self addChild: tapLabel];
+        
+		myText = [[UITextField alloc] initWithFrame:CGRectMake(50, 100, 300, 28)];
+		[myText setTextColor:[UIColor blackColor]];
+		[myText setTextAlignment:UITextAlignmentLeft];
+		[myText setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+		[myText setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
+		[myText setClearsOnBeginEditing:YES];
+		[myText setBorderStyle:UITextBorderStyleRoundedRect];
+		
+		[myText setDelegate:self];
+		[myText setReturnKeyType:UIReturnKeyDone];
+		[myText setAutocapitalizationType:UITextAutocapitalizationTypeWords];
+		[[[CCDirector sharedDirector] openGLView] addSubview: myText];
+
         
         // Enable touches
         [[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
 	}	
 	return self;
 }
+- (BOOL)textFieldShouldReturn:(UITextField*)textField {
+	//Terminate editing 
+	[textField resignFirstResponder];  
+	return YES; 
+} 
 
-- (void)showScores {
+- (void)textFieldDidEndEditing:(UITextField*)textField { 
+	NSLog(@"textFieldDidEndEditing");
+    if (textField==myText) {    
+		
+		[myText endEditing:YES]; 
+        [myText removeFromSuperview];     
+		// here is where you should do something with the data they entered   
+		NSLog(@"%@", myText.text);    
+        [self saveData];
+	}
+} 
 
+
+- (void)saveData {   
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:myText.text forKey:@"Winner1"];
+    [defaults synchronize];
 }
 
 
@@ -62,7 +102,12 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
     if ([defaults integerForKey:@"HS1"]) {
-        [winner1 setString:[NSString stringWithFormat:@"HighScore: %i",[defaults integerForKey:@"HS1"]]];
+        [HS1 setString:[NSString stringWithFormat:@"HighScore: %i",[defaults integerForKey:@"HS1"]]];
+    }
+    if ([defaults objectForKey:@"Winner1"]) {
+        
+        NSString *won = [NSString stringWithFormat:@"winner: %@",[defaults objectForKey:@"Winner1"]];
+        [winner1 setString: won];
     }
 }
 

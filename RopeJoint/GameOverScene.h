@@ -8,16 +8,21 @@
 
 #import "cocos2d.h"
 
-@interface GameOverScene : CCLayer {
+@interface GameOverScene : CCLayer <UITextFieldDelegate>
+{
+    UITextField *myText;
+
 	CCLabelTTF *winner1;
     CCLabelTTF *winner2;
     CCLabelTTF *winner3;
 	CCLabelTTF *HS1;
     CCLabelTTF *HS2;
     CCLabelTTF *HS3;
+    
+    CCLabelTTF* tapLabel;
 
 }
-
+- (void)saveData;
 - (void)restoreData;
 +(id) scene;
 
