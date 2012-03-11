@@ -9,6 +9,9 @@
 
 // Import the interfaces
 #import "ComboSeeMe.h"
+#import "SimpleAudioEngine.h"
+#import "ShatteredSprite.h"
+#import "GameOverScene.h"
 
 //Pixel to metres ratio. Box2D uses metres as the unit for measurement.
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
@@ -23,6 +26,19 @@ enum {
 	kTagAnimation1 = 1,
 };
 
+
+
+/** Convert the given position into the box2d world. */
+static inline float ptm(float d)
+{
+    return d / PTM_RATIO;
+}
+
+/** Convert the given position into the cocos2d world. */
+static inline float mtp(float d)
+{
+    return d * PTM_RATIO;
+}
 
 // ComboSeeMe implementation
 @implementation ComboSeeMe
@@ -68,7 +84,7 @@ enum {
         world = new b2World(gravity, doSleep); 
         world->SetContinuousPhysics(true); 
         
-        // Debug Draw functions
+   /*     // Debug Draw functions
         m_debugDraw = new GLESDebugDraw( PTM_RATIO );
         world->SetDebugDraw(m_debugDraw); 
         uint32 flags = 0;
@@ -80,6 +96,10 @@ enum {
         //  flags += b2DebugDraw::e_centerOfMassBit;
         
         m_debugDraw->SetFlags(flags);  
+        */
+        
+        shattered = NO;
+        
         
         b2Body* ground = NULL;
         b2BodyDef bd;
@@ -99,19 +119,34 @@ enum {
         b2Body* groundBody = world->CreateBody(&groundBodyDef);
         
         edge.Set(b2Vec2(0.000000f, 0.000000f), b2Vec2(15.000000f, 0.000000f)); //bottom wall
-        groundBody->CreateFixture(&edge,0);
+        _bottomFixture = groundBody->CreateFixture(&edge,0);
         edge.Set(b2Vec2(15.000000f, 0.000000f), b2Vec2(15.000000f, 10.000000f)); //right wall
-        groundBody->CreateFixture(&edge,0);
+        _rightFixture = groundBody->CreateFixture(&edge,0);
         edge.Set(b2Vec2(15.000000f, 10.000000f), b2Vec2(0.000000f, 10.000000f)); //top wall
-        groundBody->CreateFixture(&edge,0);
+        _topFixture = groundBody->CreateFixture(&edge,0);
         edge.Set(b2Vec2(0.000000f, 10.000000f), b2Vec2(0.000000f, 0.000000f)); //;left wall
-        groundBody->CreateFixture(&edge,0);
-                
+        _leftFixture = groundBody->CreateFixture(&edge,0);
+              
+        walls = [[NSArray alloc] initWithObjects:   [NSValue valueWithPointer:_bottomFixture], 
+                                                    [NSValue valueWithPointer:_topFixture], 
+                                                    [NSValue valueWithPointer:_leftFixture],
+                                                    [NSValue valueWithPointer:_rightFixture], nil];
+
+        
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"matty.plist"];
+        spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"matty.png"];
+        [self addChild:spriteSheet];
+        sprite = [CCSprite spriteWithSpriteFrameName:@"blinker1sm.png"];     
+        //sprite = [CCSprite spriteWithFile:@"blinkerc1.png"];     
+        [self addChild:sprite z:1 tag:88];
+        [sprite runAction:[self createBlinkAnim:YES]];
+
+        
         //Circles
         //circle2
-        CCSprite *ball = [CCSprite spriteWithFile:@"Ball.png"];
-        //[self addChild:ball];
-        //bodyDef.userData = ball;
+        //CCSprite *ball = [CCSprite spriteWithFile:@"Ball.png"];
+        //[self addChild:ball z:1];
+        bodyDef.userData = sprite;
         bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(0.468085f, 9.574468f);
         bodyDef.angle = 0.000000f;
@@ -127,60 +162,36 @@ enum {
         fd.filter.groupIndex = int16(0);
         fd.filter.categoryBits = uint16(65535);
         fd.filter.maskBits = uint16(65535);
-        circle2->CreateFixture(&fd);
+        _ballFixture = circle2->CreateFixture(&fd);
 
+        // +++ Add rope spritesheet to layer
         ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"rope.png" ];
-		[self addChild:ropeSpriteSheet];
+        [self addChild:ropeSpriteSheet];
     
         
         //paddle code
         // Create paddle and add it to the layer
         CCSprite *paddle = [CCSprite spriteWithFile:@"Paddle.png"];
         paddle.position = ccp(screenSize.width/2, 50/PTM_RATIO);
-        [self addChild:paddle];
-        
-        // Create paddle body
-        b2BodyDef paddleBodyDef;
-        paddleBodyDef.userData = paddle;
-        paddleBodyDef.type = b2_staticBody;
-        paddleBodyDef.position.Set(screenSize.width/2/PTM_RATIO, 50/PTM_RATIO);
-        //paddleBodyDef.userData = paddle;
-        _paddleBody = world->CreateBody(&paddleBodyDef);
-        
-        // Create paddle shape
-        b2PolygonShape paddleShape;
-        paddleShape.SetAsBox(paddle.contentSize.width/PTM_RATIO/2, paddle.contentSize.height/PTM_RATIO/2);
-        
-        // Create shape definition and add to body
-        b2FixtureDef paddleShapeDef;
-        paddleShapeDef.shape = &paddleShape;
-        paddleShapeDef.density = 0.915000f;
-        paddleShapeDef.friction = 0.0300000f;
-        paddleShapeDef.restitution = 0.600000f;
-        paddleShapeDef.filter.groupIndex = int16(0);
-        paddleShapeDef.filter.categoryBits = uint16(65535);
-        paddleShapeDef.filter.maskBits = uint16(65535);
-        _paddleFixture = _paddleBody->CreateFixture(&paddleShapeDef);
-        
+        [self addChild:paddle z:1 tag:11];
          
        //static body 4
         b2PolygonShape shape;
         bodyDef1.type = b2_staticBody;
+        bodyDef1.userData = paddle;
         bodyDef1.position.Set(screenSize.width/2/PTM_RATIO, 50/PTM_RATIO);
         b2Body* staticBody4 = world->CreateBody(&bodyDef1);
         shape.SetAsBox(paddle.contentSize.width/PTM_RATIO/2, paddle.contentSize.height/PTM_RATIO/2);
         fd.shape = &shape;
-        fd.density = 0.915000f;
-        fd.friction = 0.0300000f;
-        fd.restitution = 0.600000f;        
-        fd.filter.groupIndex = int16(0);
-        fd.filter.categoryBits = uint16(65535);
-        fd.filter.maskBits = uint16(65535);
+        //fd.density = 0.915000f;
+        //fd.friction = 0.0300000f;
+        //fd.restitution = 0.9f;        
+        //fd.filter.groupIndex = int16(0);
+        //fd.filter.categoryBits = uint16(65535);
+        //fd.filter.maskBits = uint16(65535);
         staticBody4->CreateFixture(&fd);
         
-         // +++ Add rope spritesheet to layer
-         ropeSpriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"rope.png" ];
-         [self addChild:ropeSpriteSheet];
+
         
          // +++ Init array that will hold references to all our ropes
          vRopes = [[NSMutableArray alloc] init];
@@ -192,14 +203,57 @@ enum {
         rjd.localAnchorA = b2Vec2(0,0); //define anchors
         rjd.localAnchorB = b2Vec2(0,0);
         rjd.maxLength= (circle2->GetPosition() - staticBody4->GetPosition()).Length(); //define max length of joint = current distance between bodies
-
+        rjd.collideConnected = true;
         world->CreateJoint(&rjd); //create joint
         VRope *newRope = [[VRope alloc] init:staticBody4 body2:circle2 spriteSheet:ropeSpriteSheet];
         [vRopes addObject:newRope];
         
         [self schedule: @selector(tick:)]; 
+        
+        contactListener = new MyContactListener();
+        world->SetContactListener(contactListener);
+        
+        // Create contact listener
+        contactListener = new MyContactListener();
+        world->SetContactListener(contactListener);
+        
+        // Preload effect
+        //[[SimpleAudioEngine sharedEngine] preloadEffect:@"hahaha.caf"];
+        [MusicHandler preload];
+        //[MusicHandler notifyTargetHit];
+
+        
     }
     return self; 
+}
+
+- (CCAction*)createBlinkAnim:(BOOL)isTarget {
+    NSMutableArray *walkAnimFrames = [NSMutableArray array];
+    for (int i=1; i<3; i++) {
+        [walkAnimFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"blinker%dsm.png", i]]];
+    }
+    
+    CCAnimation *walkAnim = [CCAnimation animationWithFrames:walkAnimFrames delay:0.1f];
+    
+    CCAnimate *blink = [CCAnimate actionWithDuration:0.2f animation:walkAnim restoreOriginalFrame:YES];
+    
+    CCAction *walkAction = [CCRepeatForever actionWithAction:
+                            [CCSequence actions:
+                             [CCDelayTime actionWithDuration:CCRANDOM_0_1()*2.0f],
+                             blink,
+                             [CCDelayTime actionWithDuration:CCRANDOM_0_1()*3.0f],
+                             blink,
+                             [CCDelayTime actionWithDuration:CCRANDOM_0_1()*0.2f],
+                             blink,
+                             [CCDelayTime actionWithDuration:CCRANDOM_0_1()*2.0f],
+                             nil]
+                            ];
+    
+    return walkAction;
+}
+
+- (void)resetShattered {
+    shattered = NO;
 }
 
 -(void) draw
@@ -211,7 +265,7 @@ enum {
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	
-	world->DrawDebugData();
+	//world->DrawDebugData();
 	
 	// restore default GL states
 	glEnable(GL_TEXTURE_2D);
@@ -267,11 +321,85 @@ enum {
 			myActor.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
 		}	
 	}
-    
+
 	// +++ Update rope physics
 	for(uint i=0;i<[vRopes count];i++) {
 		[[vRopes objectAtIndex:i] update:dt];
 	}
+        
+    
+    
+    // Loop through all of the box2d bodies that are currently colliding, that we have
+    // gathered with our custom contact listener...
+    std::vector<MyContact>::iterator pos;
+    for(pos = contactListener->_contacts.begin(); pos != contactListener->_contacts.end(); ++pos) {
+        MyContact contact = *pos;
+        
+        // Get the box2d bodies for each object
+        b2Body *bodyA = contact.fixtureA->GetBody();
+        b2Body *bodyB = contact.fixtureB->GetBody();
+        if (bodyA->GetUserData() != NULL && bodyB->GetUserData() != NULL) {
+            CCSprite *spriteA = (CCSprite *) bodyA->GetUserData();
+            CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
+            
+            // Is sprite A a cat and sprite B a car? 
+            if (spriteA.tag == 88 && spriteB.tag == 11 && !shattered) {
+                //toDestroy.push_back(bodyA);
+                [MusicHandler playBounce];
+                [self callShattered:bodyB];
+            } 
+            // Is sprite A a car and sprite B a cat?  
+            else if (spriteA.tag == 11 && spriteB.tag == 88 && !shattered) {
+                //toDestroy.push_back(bodyB);
+                [MusicHandler playBounce];
+                [self callShattered:bodyB];
+            } 
+        }  
+        
+        for (NSData *fixtureData in walls)
+        {
+            b2Fixture *fixture;
+            fixture = (b2Fixture*)[fixtureData pointerValue];
+            
+            if (shattered) return;
+            
+            if ((contact.fixtureA == fixture && contact.fixtureB == _ballFixture) ||
+                (contact.fixtureA == _ballFixture && contact.fixtureB == fixture)) {
+                // NSLog(@"Ball hit bottom!");
+                
+                if (contact.fixtureA == _bottomFixture  || contact.fixtureB == _bottomFixture) {
+                    [MusicHandler playWater];
+                    
+                   // GameOverScene *gameOverScene = [GameOverScene node];
+                   //[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1 scene:[GameOverScene node]]];
+                    
+                    GameOverScene *gameOverScene = [GameOverScene node];
+                    [gameOverScene.layer.label setString:@"You Lose :["];
+                    [[CCDirector sharedDirector] replaceScene:gameOverScene];
+                }
+                else {
+                    [MusicHandler playWall];
+                }
+                [self callShattered:bodyB];
+            } 
+        } 
+    }
+}
+
+- (void)wallSound {
+    NSString* fn = [NSString stringWithFormat:@"TARGET%d_HIT_EFFECT", 1 + arc4random() % 2];
+    NSLog(@"string value of : %@", fn);
+    [[SimpleAudioEngine sharedEngine] playEffect:fn];  
+}
+
+- (void)callShattered:(b2Body*)bodyB {
+    ShatteredSprite	*shatter = [ShatteredSprite shatterWithSprite:[CCSprite spriteWithFile:@"goldstars1sm.png"] piecesX:4 piecesY:5 speed:2.0 rotation:0.01 radial:YES];	
+    
+    shatter.position = CGPointMake( mtp(bodyB->GetPosition().x) ,  mtp(bodyB->GetPosition().y));
+    [shatter runAction:[CCEaseSineIn actionWithAction:[CCMoveBy actionWithDuration:1.0 position:ccp(0, -1000)]]];  
+    [self performSelector:@selector(resetShattered) withObject:nil afterDelay:0.9];
+    [self addChild:shatter z:1 tag:99];	
+    shattered = YES;
 }
 
 - (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -346,6 +474,25 @@ enum {
 	world = NULL;
 	
 	delete m_debugDraw;
+    delete contactListener;
+    
+    [walls release];
+    
+    //IF you have particular spritesheets to be removed! Don't use these if you haven't any
+    [[CCSpriteFrameCache sharedSpriteFrameCache]removeSpriteFramesFromFile:@"matty.plist"];
+    
+    //Use these
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFrames];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] removeUnusedSpriteFrames];
+    
+    
+    //Use these
+    [[CCTextureCache sharedTextureCache] removeUnusedTextures];
+    [[CCTextureCache sharedTextureCache] removeAllTextures];
+    [[CCDirector sharedDirector] purgeCachedData];
+    
+    //Try out and use it. Not compulsory
+    [self removeAllChildrenWithCleanup: YES];
     
 	// don't forget to call "super dealloc"
 	[super dealloc];

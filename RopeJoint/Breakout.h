@@ -12,6 +12,7 @@
 #import "Box2D.h"
 #import "GLES-Render.h"
 #import "VRope.h"
+#import "MyContactListener.h"
 
 // Breakout
 @interface Breakout : CCLayer
@@ -44,7 +45,7 @@
     b2Body *armBody;
     b2RevoluteJoint *armJoint;
     b2WeldJoint *bulletJoint;
-     
+    MyContactListener *contactListener;
 }
 
 // returns a CCScene that contains the Breakout as the only child

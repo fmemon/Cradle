@@ -11,7 +11,10 @@
 #import "cocos2d.h"
 #import "Box2D.h"
 #import "GLES-Render.h"
+#import "MyContactListener.h"
 #import "VRope.h"
+#import "MusicHandler.h"
+#import "ShatteredSprite.h"
 
 // ComboSeeMe
 @interface ComboSeeMe : CCLayer
@@ -33,7 +36,6 @@
     
     
    //Breakout
-    b2Fixture *_bottomFixture;
     b2Fixture *_ballFixture;
     
     b2Body *_paddleBody;
@@ -48,12 +50,22 @@
     //2 circles
     b2Body* anchorBody; //reference to anchor body
 
+    MyContactListener *contactListener;
     
+    b2Fixture *_bottomFixture;
+    b2Fixture *_topFixture;
+    b2Fixture *_leftFixture;
+    b2Fixture *_rightFixture;
+    
+    NSArray *walls;
+    BOOL shattered;
+    CCSpriteBatchNode* spriteSheet;
 }
 
 // returns a CCScene that contains the ComboSeeMe as the only child
 +(CCScene *) scene;
-//-(void) addNewSpriteWithCoords:(CGPoint)p;
-
+- (CCAction*)createBlinkAnim:(BOOL)isTarget;
+- (void)resetShattered;
+- (void)callShattered:(b2Body*)bodyB;
 
 @end

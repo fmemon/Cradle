@@ -147,6 +147,10 @@ enum {
         
         [self schedule:@selector(tick:)];
         [self addNewSpriteWithCoords:ccp(120.0f, winSize.height/2)];
+        
+        // Create contact listener
+        contactListener = new MyContactListener();
+        _world->SetContactListener(contactListener);
     }
     return self;
 }
@@ -320,11 +324,21 @@ enum {
 	for(uint i=0;i<[vRopes count];i++) {
 		[[vRopes objectAtIndex:i] update:dt];
 	}
-	
+
+	std::vector<MyContact>::iterator pos;
+    for(pos = contactListener->_contacts.begin(); 
+        pos != contactListener->_contacts.end(); ++pos) {
+        MyContact contact = *pos;
+        
+        if ((contact.fixtureA == _bottomFixture && contact.fixtureB == _ballFixture) ||
+            (contact.fixtureA == _ballFixture && contact.fixtureB == _bottomFixture)) {
+            NSLog(@"Ball hit bottom!");
+        }
+    }
 }
 
 - (void)dealloc {
-    
+    delete contactListener;
     delete _world;
     _groundBody = NULL;
     [super dealloc];
