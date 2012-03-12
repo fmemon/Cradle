@@ -229,7 +229,7 @@ static inline float mtp(float d)
 
         //initialize the score
         score  = 0;
-        highscore = 10;
+        highscore = 0;
         
         highscoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"HighScore: %i",highscore] fontName:@"Arial" fontSize:24];
         highscoreLabel.color = ccc3(26, 46, 149);
@@ -258,7 +258,7 @@ static inline float mtp(float d)
 }
 - (void)saveData {   
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setInteger:highscore forKey:@"HS1"];
+    [defaults setInteger:score forKey:@"newHS"];
     [defaults synchronize];
 }
 
@@ -267,15 +267,10 @@ static inline float mtp(float d)
     // Get the stored data before the view loads
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    //NSString *winner1 = [defaults objectForKey:@"winner1"];
-    //NSString *winner2 = [defaults objectForKey:@"winner2"];
-    
     if ([defaults integerForKey:@"HS1"]) {
         highscore = [defaults integerForKey:@"HS1"];
-        [highscoreLabel setString:[NSString stringWithFormat:@"Score: %i",highscore]];
+        [highscoreLabel setString:[NSString stringWithFormat:@"HighScore: %i",highscore]];
     }
-
-
 }
 
 - (CCAction*)createBlinkAnim:(BOOL)isTarget {
@@ -424,11 +419,7 @@ static inline float mtp(float d)
                 if (contact.fixtureA == _bottomFixture  || contact.fixtureB == _bottomFixture) {
                     [MusicHandler playWater];
                     
-                    if (score > highscore) {
-                        highscore = score;
-                        [self saveData];
-                    }
-                    
+                    [self saveData];
                     //GameOverScene *gameOverScene = [GameOverScene node];
                     [[CCDirector sharedDirector] replaceScene:[GameOverScene node]];
                 }

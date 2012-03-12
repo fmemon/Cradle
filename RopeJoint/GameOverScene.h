@@ -11,8 +11,6 @@
 
 @interface GameOverScene : CCLayer <UITextFieldDelegate, UIAlertViewDelegate>
 {
-    UITextField *myText;
-
 	CCLabelTTF *winner1;
     CCLabelTTF *winner2;
     CCLabelTTF *winner3;
@@ -23,6 +21,10 @@
     int H1;
     int H2;
     int H3;
+    NSString* W1;
+    NSString* W2;
+    NSString* W3;
+    
     NSString *newWinner;
     
     CCLabelTTF* tapLabel;
