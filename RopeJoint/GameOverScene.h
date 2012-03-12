@@ -7,8 +7,9 @@
 //
 
 #import "cocos2d.h"
+#import <UIKit/UIKit.h>
 
-@interface GameOverScene : CCLayer <UITextFieldDelegate>
+@interface GameOverScene : CCLayer <UITextFieldDelegate, UIAlertViewDelegate>
 {
     UITextField *myText;
 
@@ -18,12 +19,22 @@
 	CCLabelTTF *HS1;
     CCLabelTTF *HS2;
     CCLabelTTF *HS3;
+    int newHS;
+    int H1;
+    int H2;
+    int H3;
+    NSString *newWinner;
     
     CCLabelTTF* tapLabel;
-
+    CCLabelTTF* newHSlabel;
+    UITextField* myTextField;
 }
+
++(id) scene;
 - (void)saveData;
 - (void)restoreData;
-+(id) scene;
+- (void)testScore;
+- (void)printScores;
+-(void)setLabels;
 
 @end
