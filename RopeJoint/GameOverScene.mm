@@ -37,14 +37,24 @@
         [self restoreData];
         [self setLabels];
  
-        NSLog(@"in INIT After Resotre New hihscorer1!W1: %@  W2: %@  W3: %@  newWinner: %@", W1, W2, W3, newWinner);
+        NSLog(@"After Restore: W1: %@  W2: %@  W3: %@  newWinner: %@", W1, W2, W3, newWinner);
 
         if (newHS >= H1 || newHS >= H2 || newHS >= H3) {
             UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:@"Add Username" message:@"This gets covered." delegate:self cancelButtonTitle:@"Done" otherButtonTitles:@"Cancel", nil];
             myTextField = [[UITextField alloc] initWithFrame:CGRectMake(12.0, 30.0, 260.0, 25.0)];
-            [myTextField setPlaceholder:@"Enter HighScorer Name"];
             [myTextField setBackgroundColor:[UIColor whiteColor]];
             [myTextField setAutocorrectionType:UITextAutocorrectionTypeNo];
+            [myTextField setTextAlignment:UITextAlignmentCenter];
+            myTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+            if ([newWinner isEqualToString:@"HighScorer"]) { 
+                [myTextField setPlaceholder:@"Enter HighScorer Name"];
+            }
+            else {
+                [myTextField setText:[NSString stringWithFormat:@"%@", newWinner]];
+            }
+            
+            //[myTextField setText:[NSString stringWithFormat:@"%@", newWinner]];
+            
             [myAlertView addSubview:myTextField];
             [myAlertView show];
         }        
@@ -60,17 +70,24 @@
 }
 
 -(void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-
+    
     if(buttonIndex == 0) {
-        newWinner = [NSString stringWithFormat:@"%@", myTextField.text];
-        
+        if ([myTextField.text length] == 0) {
+            newWinner = @"HighScorer";
+        }
+        else {
+            newWinner = [NSString stringWithFormat:@"%@", myTextField.text];
+        }
         [self testScore];
         [self saveData];
         [self printScores];
-
+        
 	}else if(buttonIndex == 1){
         //Cancel button
+        newWinner = @"HighScorer";
     }
+    NSLog(@"In AlertView: W1: %@  W2: %@  W3: %@  newWinner: %@", W1, W2, W3, newWinner);
+
 }
 
 -(void)setLabels {
@@ -126,6 +143,7 @@
     [defaults setObject:W1 forKey:@"Winner1"];
     [defaults setObject:W2 forKey:@"Winner2"];
     [defaults setObject:W3 forKey:@"Winner3"];
+    [defaults setObject:newWinner forKey:@"newWinner"];
     
     [defaults setInteger:H1 forKey:@"HS1"];
     [defaults setInteger:H2 forKey:@"HS2"];
@@ -138,6 +156,9 @@
     // Get the stored data before the view loads
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
+    if ([defaults objectForKey:@"newWinner"]) {
+        newWinner = [defaults stringForKey:@"newWinner"];
+    }
     if ([defaults objectForKey:@"Winner1"]) {
         W1 = [defaults stringForKey:@"Winner1"];
     }
@@ -164,39 +185,30 @@
 - (void)testScore {
     
     if (newHS >= H1) {
-        NSLog(@"Before New hihscorer1!W1: %@  W2: %@  W3: %@  newWinner: %@", W1, W2, W3, newWinner);
-
         H3 = H2;
         W3 = [NSString stringWithFormat:@"%@", W2];
         H2 = H1;
         W2 = [NSString stringWithFormat:@"%@", W1];
         H1 = newHS;
         W1 = [NSString stringWithFormat:@"%@", newWinner];
-        //[newHSlabel setString:@"New Highscorer1!!!"];
-        NSLog(@"After New hihscorer1!W1: %@  W2: %@  W3: %@  newWinner: %@", W1, W2, W3, newWinner);
     }
     else if (newHS >= H2) {
         H3 = H2;
         W3 = [NSString stringWithFormat:@"%@", W2];
         H2 = newHS;
         W2 = [NSString stringWithFormat:@"%@", newWinner];
-        //[newHSlabel setString:@"New Highscorer2!!"];
-        NSLog(@"New hihscorer2!");
     }
     else if (newHS >= H3) {
         H3 = newHS;
         W3 = [NSString stringWithFormat:@"%@", newWinner];
-        //[newHSlabel setString:@"New Highscorer3!"];
-        NSLog(@"New hihscorer3!");
     }
     else {
         //no switch over
-        //[newHSlabel setVisible:NO];
-        NSLog(@"No New hihscorer1!");
     }
 }
 
 - (void)printScores {
+    
     [winner1 setString:[NSString stringWithFormat:@"1. %@",W1]];
     [winner2 setString:[NSString stringWithFormat:@"2. %@",W2]];
     [winner3 setString:[NSString stringWithFormat:@"3. %@",W3]];

@@ -134,7 +134,7 @@ static inline float mtp(float d)
 
         
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"matty.plist"];
-        spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"matty2.png"];
+        spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"matty.png"];
         [self addChild:spriteSheet];
         sprite = [CCSprite spriteWithSpriteFrameName:@"blinker1sm.png"];     
         //sprite = [CCSprite spriteWithFile:@"blinkerc1.png"];     
