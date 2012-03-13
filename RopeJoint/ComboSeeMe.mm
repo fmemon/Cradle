@@ -365,6 +365,9 @@ static inline float mtp(float d)
 			CCSprite *myActor = (CCSprite*)b->GetUserData();
 			myActor.position = CGPointMake( b->GetPosition().x * PTM_RATIO, b->GetPosition().y * PTM_RATIO);
 			myActor.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
+            
+            //random apply impulse
+           //if (CCRANDOM_0_1()*3 == 2) [self applyPush:b];   
 		}	
 	}
 
@@ -389,18 +392,21 @@ static inline float mtp(float d)
             CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
             
             // Is sprite A a cat and sprite B a car? 
-            if (spriteA.tag == 88 && spriteB.tag == 11 && !shattered) {
+            if (spriteA.tag == 88 && spriteB.tag == 11) {
                 //toDestroy.push_back(bodyA);
                 [MusicHandler playBounce];
-                [self callShattered:bodyB];
+                [self callEmitter:bodyB];
                 [self updateScore];
+                [self applyPush:bodyB];   
+
             } 
             // Is sprite A a car and sprite B a cat?  
-            else if (spriteA.tag == 11 && spriteB.tag == 88 && !shattered) {
+            else if (spriteA.tag == 11 && spriteB.tag == 88) {
                 //toDestroy.push_back(bodyB);
                 [MusicHandler playBounce];
-                [self callShattered:bodyB];
+                [self callEmitter:bodyB];
                 [self updateScore];
+                [self applyPush:bodyB];   
 
             } 
         }  
@@ -410,7 +416,7 @@ static inline float mtp(float d)
             b2Fixture *fixture;
             fixture = (b2Fixture*)[fixtureData pointerValue];
             
-            if (shattered) return;
+            //if (shattered) return;
             
             if ((contact.fixtureA == fixture && contact.fixtureB == _ballFixture) ||
                 (contact.fixtureA == _ballFixture && contact.fixtureB == fixture)) {
@@ -424,22 +430,44 @@ static inline float mtp(float d)
                     [[CCDirector sharedDirector] replaceScene:[GameOverScene node]];
                 }
                 else {
-                    [MusicHandler playWall];
+                    //[MusicHandler playWall];
                 }
-                [self callShattered:bodyB];
+                //[self callShattered:bodyB];
             } 
         } 
     }
 }
 
+- (void)applyPush:(b2Body*)bodyB  {
+   // NSLog(@"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    CGSize screenSize = [CCDirector sharedDirector].winSize;
+
+    b2Vec2 velocity = bodyB->GetLinearVelocity();
+    float speed = velocity.Length()/10;
+    //NSLog(@"Speed value: %0.0f", speed);
+    
+    
+    int xStrength = (int)((mtp(bodyB->GetPosition().x) - int(screenSize.width/2/PTM_RATIO))/60);
+    int numParticle = 30 +CCRANDOM_0_1()*10 + xStrength;
+    NSLog(@"xStrength value, %i", xStrength);
+    
+    CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
+    if (spriteB.tag == 88) {
+    b2Vec2 force = b2Vec2(0.3*xStrength, 0.3*xStrength);
+    bodyB->ApplyLinearImpulse(force, bodyB->GetPosition());
+        
+        
+    }
+}
+
 - (void)wallSound {
     NSString* fn = [NSString stringWithFormat:@"TARGET%d_HIT_EFFECT", 1 + arc4random() % 2];
-    NSLog(@"string value of : %@", fn);
+    //NSLog(@"string value of : %@", fn);
     [[SimpleAudioEngine sharedEngine] playEffect:fn];  
 }
 
 - (void)callShattered:(b2Body*)bodyB {
-    ShatteredSprite	*shatter = [ShatteredSprite shatterWithSprite:[CCSprite spriteWithFile:@"goldstars1sm.png"] piecesX:4 piecesY:5 speed:2.0 rotation:0.01 radial:YES];	
+    ShatteredSprite	*shatter = [ShatteredSprite shatterWithSprite:[CCSprite spriteWithFile:@"Paddle.png"] piecesX:4 piecesY:5 speed:2.0 rotation:0.01 radial:YES];	
     
     shatter.position = CGPointMake( mtp(bodyB->GetPosition().x) ,  mtp(bodyB->GetPosition().y));
     [shatter runAction:[CCEaseSineIn actionWithAction:[CCMoveBy actionWithDuration:1.0 position:ccp(0, -1000)]]];  
@@ -469,6 +497,51 @@ static inline float mtp(float d)
         _mouseJoint = (b2MouseJoint *) world->CreateJoint(&md);
         _paddleBody->SetAwake(true);
     }
+}
+
+-(void)callEmitter:(b2Body*)bodyB {
+
+    CGSize screenSize = [CCDirector sharedDirector].winSize;
+/*
+      CCParticleExplosion* explosion = [[CCParticleExplosion alloc] initWithTotalParticles:200];
+     //CCParticleSun* explosion = [[CCParticleSun alloc] initWithTotalParticles:200];
+     explosion.texture = [[CCTextureCache sharedTextureCache] addImage:@"stars.png"];
+     //explosion.texture = [[CCTextureCache sharedTextureCache] addImage:@"goldstars1.png"];
+     explosion.autoRemoveOnFinish = YES;
+     explosion.startSize = 10.0f;
+     explosion.speed = 70.0f;
+     explosion.anchorPoint = ccp(0.5f,0.5f);
+    
+     //explosion.position = ccp(screenSize.width/2, 50/PTM_RATIO);
+     explosion.position = CGPointMake( mtp(bodyB->GetPosition().x) ,  mtp(bodyB->GetPosition().y));
+
+    
+     explosion.duration = 1.0f;
+     [self addChild:explosion z:11];
+     [explosion release];
+*/
+    
+    CCParticleExplosion *myEmitter;
+    //screenSize.width/2/PTM_RATIO
+    b2Vec2 velocity = bodyB->GetLinearVelocity();
+    float speed = velocity.Length()/10;
+   //NSLog(@"Speed value: %0.0f", speed);
+    
+    
+    int xStrength = (int)((mtp(bodyB->GetPosition().x) - int(screenSize.width/2/PTM_RATIO))/4);
+    int numParticle = 30 +CCRANDOM_0_1()*10 + xStrength;
+    myEmitter = [[CCParticleExplosion alloc] initWithTotalParticles:numParticle];
+    myEmitter.texture = [[CCTextureCache sharedTextureCache] addImage:@"goldstars1.png"];
+    myEmitter.position = CGPointMake( mtp(bodyB->GetPosition().x) ,  mtp(bodyB->GetPosition().y));
+    myEmitter.life =0.2 + CCRANDOM_0_1()*0.2;
+    myEmitter.duration = 0.3 + CCRANDOM_0_1()*0.35;
+    myEmitter.scale = 0.3 + CCRANDOM_0_1()*0.2 + speed;
+    myEmitter.speed = 50 + CCRANDOM_0_1()*50 + xStrength;
+    //For not showing color
+    myEmitter.blendAdditive = YES;
+    [self addChild:myEmitter z:11];
+    myEmitter.autoRemoveOnFinish = YES;
+
 }
 
 - (void)ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event

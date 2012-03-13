@@ -3,7 +3,8 @@
 
 //static NSString *WATER_EFFECT = @"ice.wav";
 //static NSString *WATER_EFFECT = @"waterDRIP5.WAV";
-static NSString *WATER_EFFECT = @"splash2.mp3";
+//static NSString *WATER_EFFECT = @"splash2.mp3";
+static NSString *WATER_EFFECT = @"gong.wav";
 static NSString *BOUNCE_EFFECT = @"boing.wav";
 static NSString *TARGET1_HIT_EFFECT = @"break.wav";
 static NSString *TARGET2_HIT_EFFECT = @"explosion.mp3";//not sure if working

@@ -15,6 +15,7 @@
 #import "VRope.h"
 #import "MusicHandler.h"
 #import "ShatteredSprite.h"
+//#import "DWFParticleView.h"
 
 // ComboSeeMe
 @interface ComboSeeMe : CCLayer
@@ -65,6 +66,8 @@
     int highscore;
     CCLabelTTF *highscoreLabel;
     CCLabelTTF *scoreLabel;
+    
+    //DWFParticleView* fireView;
 }
 
 // returns a CCScene that contains the ComboSeeMe as the only child
@@ -72,8 +75,11 @@
 - (CCAction*)createBlinkAnim:(BOOL)isTarget;
 - (void)resetShattered;
 - (void)callShattered:(b2Body*)bodyB;
+- (void)callEmitter:(b2Body*)bodyB;
 - (void)updateScore;
 - (void)saveData;
 - (void)restoreData;
+- (void)applyPush:(b2Body*)bodyB;
+
 
 @end
