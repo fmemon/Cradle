@@ -24,6 +24,14 @@
         sprite2.anchorPoint = CGPointZero;
         [self addChild:sprite2 z:-11];
         
+       /* CCMenuItem *On = [CCMenuItemFont itemFromString:@"On" target:self selector:@selector(turnOnMusic)];
+        CCMenuItem *Off = [CCMenuItemFont itemFromString:@"Off" target:self selector:@selector(turnOffMusic)];
+        CCMenu *menu = [CCMenu menuWithItems: On, Off, nil];
+        menu.position = ccp (240,100);
+        [menu alignItemsVerticallyWithPadding:10];
+        [self addChild:menu];
+         */
+        
         //initialize data
         W1 = @"HighScorer";
         W2 = @"HighScorer";
@@ -68,6 +76,24 @@
 	}	
 	return self;
 }
+- (void)turnOnMusic {
+    [[SimpleAudioEngine sharedEngine] setMute:1];
+}
+
+- (void)turnOffMusic {
+    [[SimpleAudioEngine sharedEngine] setMute:0];
+}
+-(void)muteSound {
+    if ([[SimpleAudioEngine sharedEngine] mute]) {
+        // This will unmute the sound
+        [[SimpleAudioEngine sharedEngine] setMute:0];
+    }
+    else {
+        //This will mute the sound
+        [[SimpleAudioEngine sharedEngine] setMute:1];
+    }
+}
+
 
 -(void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
@@ -240,6 +266,7 @@
     [tapLabel release];
     [newHSlabel release];
     [myTextField release];
+    [muteBtn release];
 	[super dealloc];
 }
 

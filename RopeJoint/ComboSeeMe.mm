@@ -242,10 +242,49 @@ static inline float mtp(float d)
         [self addChild:scoreLabel z:10];
         
         [self restoreData];
+   /*     
+       // CCMenuItem *On = [CCMenuItemFont itemFromString:@"On" target:self selector:@selector(turnOnMusic)];
         
+        //CCMenuItem *On = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithSpriteFrameName:@"blinkie1.png"] selectedSprite:[CCSprite spriteWithSpriteFrameName:@"blinkie2.png"] target:self selector:@selector(turnOnMusic)];
+        
+        CCMenuItemToggle *pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(pause)items:playItem, pauseItem, nil];
+		pause.position = ccp(windowSize.width*0.07, windowSize.height*0.955);
+
+         CCMenu *menu = [CCMenu menuWithItems: On, nil];
+         menu.position = ccp (240,240);
+         [menu alignItemsVerticallyWithPadding:10];
+         [self addChild:menu];
+        */
+        
+        //Pause Toggle can not sure frame cache for sprites!!!!!
+		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"blinkie1.png"]
+															  selectedSprite:[CCSprite spriteWithFile:@"blinkie1.png"]];
+        
+		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"blinkie2.png"]
+                                                             selectedSprite:[CCSprite spriteWithFile:@"blinkie2.png"]];
+        
+		CCMenuItemToggle *pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:playItem, pauseItem, nil];
+		pause.position = ccp(screenSize.width*0.07, screenSize.height*0.955);
+        
+		//Create Menu with the items created before
+		CCMenu *menu = [CCMenu menuWithItems:pause, nil];
+		menu.position = CGPointZero;
+		[self addChild:menu z:11];
     }
     return self; 
 }
+
+- (void)turnOnMusic {
+    if ([[SimpleAudioEngine sharedEngine] mute]) {
+        // This will unmute the sound
+        [[SimpleAudioEngine sharedEngine] setMute:0];
+    }
+    else {
+        //This will mute the sound
+        [[SimpleAudioEngine sharedEngine] setMute:1];
+    }
+}
+
 
 - (void)updateScore {
     score +=100;
@@ -593,7 +632,7 @@ static inline float mtp(float d)
     [walls release];
     
     //IF you have particular spritesheets to be removed! Don't use these if you haven't any
-    [[CCSpriteFrameCache sharedSpriteFrameCache]removeSpriteFramesFromFile:@"matty.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache]removeSpriteFramesFromFile:@"froggie.plist"];
     
     //Use these
     [[CCSpriteFrameCache sharedSpriteFrameCache] removeSpriteFrames];

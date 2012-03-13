@@ -30,6 +30,8 @@
     CCLabelTTF* tapLabel;
     CCLabelTTF* newHSlabel;
     UITextField* myTextField;
+    
+    UIButton *muteBtn;
 }
 
 +(id) scene;

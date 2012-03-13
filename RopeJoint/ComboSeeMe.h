@@ -67,7 +67,6 @@
     CCLabelTTF *highscoreLabel;
     CCLabelTTF *scoreLabel;
     
-    //DWFParticleView* fireView;
 }
 
 // returns a CCScene that contains the ComboSeeMe as the only child

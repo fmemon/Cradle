@@ -46,6 +46,11 @@
 		65A86C88150D17ED005A2D14 /* matty2.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A86C87150D17ED005A2D14 /* matty2.png */; };
 		65A86C8B150D1888005A2D14 /* bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A86C8A150D1888005A2D14 /* bg.png */; };
 		65A86C8D150D1B63005A2D14 /* newrope.png in Resources */ = {isa = PBXBuildFile; fileRef = 65A86C8C150D1B63005A2D14 /* newrope.png */; };
+		65CC3BB0150F03E40030CEDA /* blinkie2.png in Resources */ = {isa = PBXBuildFile; fileRef = 65CC3BAE150F03E40030CEDA /* blinkie2.png */; };
+		65CC3BB1150F03E40030CEDA /* blinkie1.png in Resources */ = {isa = PBXBuildFile; fileRef = 65CC3BAF150F03E40030CEDA /* blinkie1.png */; };
+		65CC3BB9150F0C900030CEDA /* froggie.png in Resources */ = {isa = PBXBuildFile; fileRef = 65CC3BB7150F0C900030CEDA /* froggie.png */; };
+		65CC3BBA150F0C900030CEDA /* froggie.plist in Resources */ = {isa = PBXBuildFile; fileRef = 65CC3BB8150F0C900030CEDA /* froggie.plist */; };
+		65CC3BC0150F1D3E0030CEDA /* goldstars1NO.png in Resources */ = {isa = PBXBuildFile; fileRef = 65CC3BBF150F1D3E0030CEDA /* goldstars1NO.png */; };
 		65D28948150AB18800C172BA /* NewCradle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65D28947150AB18800C172BA /* NewCradle.mm */; };
 		65EEDFEB15008BC600EA6B76 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EEDFEA15008BC600EA6B76 /* QuartzCore.framework */; };
 		65EEDFED15008BC600EA6B76 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EEDFEC15008BC600EA6B76 /* OpenGLES.framework */; };
@@ -203,7 +208,6 @@
 		65FC885D150EA8A300F21A7B /* splash2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 65FC885C150EA8A300F21A7B /* splash2.mp3 */; };
 		65FC885F150EC6C600F21A7B /* goldstars1.png in Resources */ = {isa = PBXBuildFile; fileRef = 65FC885E150EC6C600F21A7B /* goldstars1.png */; };
 		65FC8861150EC83E00F21A7B /* stars.png in Resources */ = {isa = PBXBuildFile; fileRef = 65FC8860150EC83E00F21A7B /* stars.png */; };
-		65FC886A150ECD0700F21A7B /* Particles_fire.png in Resources */ = {isa = PBXBuildFile; fileRef = 65FC8868150ECD0700F21A7B /* Particles_fire.png */; };
 		65FC886C150ECF1C00F21A7B /* fire.png in Resources */ = {isa = PBXBuildFile; fileRef = 65FC886B150ECF1C00F21A7B /* fire.png */; };
 /* End PBXBuildFile section */
 
@@ -256,6 +260,11 @@
 		65A86C87150D17ED005A2D14 /* matty2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = matty2.png; sourceTree = "<group>"; };
 		65A86C8A150D1888005A2D14 /* bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg.png; sourceTree = "<group>"; };
 		65A86C8C150D1B63005A2D14 /* newrope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = newrope.png; sourceTree = "<group>"; };
+		65CC3BAE150F03E40030CEDA /* blinkie2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blinkie2.png; sourceTree = "<group>"; };
+		65CC3BAF150F03E40030CEDA /* blinkie1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blinkie1.png; sourceTree = "<group>"; };
+		65CC3BB7150F0C900030CEDA /* froggie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = froggie.png; sourceTree = "<group>"; };
+		65CC3BB8150F0C900030CEDA /* froggie.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = froggie.plist; sourceTree = "<group>"; };
+		65CC3BBF150F1D3E0030CEDA /* goldstars1NO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goldstars1NO.png; sourceTree = "<group>"; };
 		65D28945150AB17800C172BA /* NewCradle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewCradle.h; sourceTree = "<group>"; };
 		65D28947150AB18800C172BA /* NewCradle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NewCradle.mm; sourceTree = "<group>"; };
 		65EEDFE615008BC600EA6B76 /* RopeJoint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RopeJoint.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -582,7 +591,6 @@
 		65FC885C150EA8A300F21A7B /* splash2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = splash2.mp3; sourceTree = "<group>"; };
 		65FC885E150EC6C600F21A7B /* goldstars1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goldstars1.png; sourceTree = "<group>"; };
 		65FC8860150EC83E00F21A7B /* stars.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stars.png; sourceTree = "<group>"; };
-		65FC8868150ECD0700F21A7B /* Particles_fire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Particles_fire.png; sourceTree = "<group>"; };
 		65FC886B150ECF1C00F21A7B /* fire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fire.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -730,8 +738,12 @@
 		65EEDFFB15008BC600EA6B76 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				65CC3BBF150F1D3E0030CEDA /* goldstars1NO.png */,
+				65CC3BB7150F0C900030CEDA /* froggie.png */,
+				65CC3BB8150F0C900030CEDA /* froggie.plist */,
+				65CC3BAE150F03E40030CEDA /* blinkie2.png */,
+				65CC3BAF150F03E40030CEDA /* blinkie1.png */,
 				65FC886B150ECF1C00F21A7B /* fire.png */,
-				65FC8868150ECD0700F21A7B /* Particles_fire.png */,
 				65FC8860150EC83E00F21A7B /* stars.png */,
 				65FC885E150EC6C600F21A7B /* goldstars1.png */,
 				65A86C8A150D1888005A2D14 /* bg.png */,
@@ -1279,8 +1291,12 @@
 				65FC885D150EA8A300F21A7B /* splash2.mp3 in Resources */,
 				65FC885F150EC6C600F21A7B /* goldstars1.png in Resources */,
 				65FC8861150EC83E00F21A7B /* stars.png in Resources */,
-				65FC886A150ECD0700F21A7B /* Particles_fire.png in Resources */,
 				65FC886C150ECF1C00F21A7B /* fire.png in Resources */,
+				65CC3BB0150F03E40030CEDA /* blinkie2.png in Resources */,
+				65CC3BB1150F03E40030CEDA /* blinkie1.png in Resources */,
+				65CC3BB9150F0C900030CEDA /* froggie.png in Resources */,
+				65CC3BBA150F0C900030CEDA /* froggie.plist in Resources */,
+				65CC3BC0150F1D3E0030CEDA /* goldstars1NO.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
