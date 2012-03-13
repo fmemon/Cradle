@@ -133,11 +133,11 @@ static inline float mtp(float d)
                                                     [NSValue valueWithPointer:_rightFixture], nil];
 
         
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"matty.plist"];
-        spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"matty.png"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"froggie.plist"];
+        spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"froggie.png"];
         [self addChild:spriteSheet];
-        sprite = [CCSprite spriteWithSpriteFrameName:@"blinker1sm.png"];     
-        //sprite = [CCSprite spriteWithFile:@"blinkerc1.png"];     
+        sprite = [CCSprite spriteWithSpriteFrameName:@"frog1.png"];     
+        //sprite = [CCSprite spriteWithFile:@"blinkie1.png"];     
         [self addChild:sprite z:1 tag:88];
         [sprite runAction:[self createBlinkAnim:YES]];
 
@@ -276,7 +276,8 @@ static inline float mtp(float d)
 - (CCAction*)createBlinkAnim:(BOOL)isTarget {
     NSMutableArray *walkAnimFrames = [NSMutableArray array];
     for (int i=1; i<3; i++) {
-        [walkAnimFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"blinker%dsm.png", i]]];
+        //[walkAnimFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"blinker%dsm.png", i]]];
+        [walkAnimFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"frog%d.png", i]]];
     }
     
     CCAnimation *walkAnim = [CCAnimation animationWithFrames:walkAnimFrames delay:0.1f];
@@ -441,15 +442,9 @@ static inline float mtp(float d)
 - (void)applyPush:(b2Body*)bodyB  {
    // NSLog(@"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
     CGSize screenSize = [CCDirector sharedDirector].winSize;
-
-    b2Vec2 velocity = bodyB->GetLinearVelocity();
-    float speed = velocity.Length()/10;
-    //NSLog(@"Speed value: %0.0f", speed);
-    
     
     int xStrength = (int)((mtp(bodyB->GetPosition().x) - int(screenSize.width/2/PTM_RATIO))/60);
-    int numParticle = 30 +CCRANDOM_0_1()*10 + xStrength;
-    NSLog(@"xStrength value, %i", xStrength);
+    //NSLog(@"xStrength value, %i", xStrength);
     
     CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
     if (spriteB.tag == 88) {
