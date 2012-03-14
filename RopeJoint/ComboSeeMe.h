@@ -67,6 +67,8 @@
     CCLabelTTF *highscoreLabel;
     CCLabelTTF *scoreLabel;
     
+    BOOL muted;
+
 }
 
 // returns a CCScene that contains the ComboSeeMe as the only child

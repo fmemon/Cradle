@@ -99,7 +99,8 @@ static inline float mtp(float d)
         */
         
         shattered = NO;
-        
+        muted = FALSE;
+
         
         b2Body* ground = NULL;
         b2BodyDef bd;
@@ -252,29 +253,24 @@ static inline float mtp(float d)
         [self addChild:scoreLabel z:10];
         
         [self restoreData];
-   /*     
-       // CCMenuItem *On = [CCMenuItemFont itemFromString:@"On" target:self selector:@selector(turnOnMusic)];
-        
-        //CCMenuItem *On = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithSpriteFrameName:@"blinkie1.png"] selectedSprite:[CCSprite spriteWithSpriteFrameName:@"blinkie2.png"] target:self selector:@selector(turnOnMusic)];
-        
-        CCMenuItemToggle *pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(pause)items:playItem, pauseItem, nil];
-		pause.position = ccp(windowSize.width*0.07, windowSize.height*0.955);
-
-         CCMenu *menu = [CCMenu menuWithItems: On, nil];
-         menu.position = ccp (240,240);
-         [menu alignItemsVerticallyWithPadding:10];
-         [self addChild:menu];
-        */
-        
+        // Enable touches        
+        [[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
         //Pause Toggle can not sure frame cache for sprites!!!!!
-		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOn.png"]
-															  selectedSprite:[CCSprite spriteWithFile:@"PauseOnSelect.png"]];
+		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOn.png"]
+                                                             selectedSprite:[CCSprite spriteWithFile:@"PauseOnSelect.png"]];
         
-		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOFF.png"]
-                                                             selectedSprite:[CCSprite spriteWithFile:@"PauseOFFSelect.png"]];
+		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOFF.png"]
+                                                              selectedSprite:[CCSprite spriteWithFile:@"PauseOFFSelect.png"]];
+        CCMenuItemToggle *pause;
+		if (!muted)  {
+            pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:playItem, pauseItem, nil];
+            pause.position = ccp(screenSize.width*0.06, screenSize.height*0.90f);
+        }
+        else {
+            pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:pauseItem, playItem, nil];
+            pause.position = ccp(screenSize.width*0.06, screenSize.height*0.90f);
+        }
         
-		CCMenuItemToggle *pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:playItem, pauseItem, nil];
-		pause.position = ccp(screenSize.width*0.07, screenSize.height*0.955);
         
 		//Create Menu with the items created before
 		CCMenu *menu = [CCMenu menuWithItems:pause, nil];
@@ -287,14 +283,20 @@ static inline float mtp(float d)
 - (void)turnOnMusic {
     if ([[SimpleAudioEngine sharedEngine] mute]) {
         // This will unmute the sound
-        [[SimpleAudioEngine sharedEngine] setMute:0];
+        muted = FALSE;
+        // [[SimpleAudioEngine sharedEngine] setMute:0];
     }
     else {
         //This will mute the sound
-        [[SimpleAudioEngine sharedEngine] setMute:1];
+        muted = TRUE;
+        //[[SimpleAudioEngine sharedEngine] setMute:1];
     }
+    [[SimpleAudioEngine sharedEngine] setMute:muted];    
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:muted forKey:@"IsMuted"];
+    [defaults synchronize];
 }
-
 
 - (void)updateScore {
     score +=100;
@@ -320,6 +322,12 @@ static inline float mtp(float d)
         highscore = [defaults integerForKey:@"HS1"];
         [highscoreLabel setString:[NSString stringWithFormat:@"HighScore: %i",highscore]];
     }
+    
+    if ([defaults boolForKey:@"IsMuted"]) {
+        muted = [defaults boolForKey:@"IsMuted"];
+    }
+    
+    NSLog(@"Is muted value afterward %d", muted);
 }
 
 - (CCAction*)createBlinkAnim:(BOOL)isTarget {

@@ -57,6 +57,7 @@
         H3 = 0;
         newHS = 0;
         newWinner = @"HighScorer";
+        muted = FALSE;
                 
         [self restoreData];
         [self setLabels];
@@ -84,7 +85,7 @@
         }        
         
         tapLabel = [CCLabelTTF labelWithString:@"Tap to Restart" fontName:@"Marker Felt" fontSize:35];
-		tapLabel.position = ccp(225, 70.0f);    
+		tapLabel.position = ccp(249, 65.0f);    
         tapLabel.color = ccBLUE;
 		[self addChild: tapLabel];
         
@@ -93,16 +94,22 @@
 
         [[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
         //Pause Toggle can not sure frame cache for sprites!!!!!
-		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOn.png"]
+		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOn.png"]
 															  selectedSprite:[CCSprite spriteWithFile:@"PauseOnSelect.png"]];
         
-		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOFF.png"]
+		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOFF.png"]
                                                              selectedSprite:[CCSprite spriteWithFile:@"PauseOFFSelect.png"]];
+        CCMenuItemToggle *pause;
+		if (!muted)  {
+            pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:playItem, pauseItem, nil];
+            pause.position = ccp(screenSize.width*0.06, screenSize.height*0.90f);
+        }
+        else {
+            pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:pauseItem, playItem, nil];
+            pause.position = ccp(screenSize.width*0.06, screenSize.height*0.90f);
+        }
+
         
-		CCMenuItemToggle *pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:playItem, pauseItem, nil];
-		//pause.position = ccp(screenSize.width*0.07, screenSize.height*0.955);
-        
-        pause.position = ccp(240.0f, 240.0f);
 		//Create Menu with the items created before
 		CCMenu *menu = [CCMenu menuWithItems:pause, nil];
 		menu.position = CGPointZero;
@@ -114,23 +121,21 @@
 - (void)turnOnMusic {
     if ([[SimpleAudioEngine sharedEngine] mute]) {
         // This will unmute the sound
-        [[SimpleAudioEngine sharedEngine] setMute:0];
+        muted = FALSE;
+        // [[SimpleAudioEngine sharedEngine] setMute:0];
     }
     else {
         //This will mute the sound
-        [[SimpleAudioEngine sharedEngine] setMute:1];
+        muted = TRUE;
+        //[[SimpleAudioEngine sharedEngine] setMute:1];
     }
-}
-
--(void)muteSound {
-    if ([[SimpleAudioEngine sharedEngine] mute]) {
-        // This will unmute the sound
-        [[SimpleAudioEngine sharedEngine] setMute:0];
-    }
-    else {
-        //This will mute the sound
-        [[SimpleAudioEngine sharedEngine] setMute:1];
-    }
+    [[SimpleAudioEngine sharedEngine] setMute:muted];
+    NSLog(@"in mute Siund %d", muted);
+    
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:muted forKey:@"IsMuted"];
+    [defaults synchronize];
 }
 
 
@@ -151,40 +156,43 @@
         //Cancel button
         newWinner = @"HighScorer";
     }
-    NSLog(@"In AlertView: W1: %@  W2: %@  W3: %@  newWinner: %@", W1, W2, W3, newWinner);
-
 }
 
 -(void)setLabels {
-    winner1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"1. %@",W1] fontName:@"Arial" fontSize:24];
+    winner1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"1. %@",W1] fontName:@"Arial" fontSize:28];
     winner1.position = ccp(160.0f, 280.0f);
     winner1.color = ccc3(26, 46, 149);
-    winner1.color = ccORANGE;
+    winner1.color = ccBLUE;
     [self addChild:winner1];
     
-    HS1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H1]fontName:@"Arial" fontSize:24];
+    HS1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H1]fontName:@"Arial" fontSize:28];
     HS1.position = ccp(340.0f, 280.0f);
     HS1.color = ccc3(26, 46, 149);
+    winner1.color = ccBLUE;
     [self addChild:HS1];
    
-    winner2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"2. %@",W2] fontName:@"Arial" fontSize:24];
+    winner2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"2. %@",W2] fontName:@"Arial" fontSize:28];
     winner2.position = ccp(160.0f, 240.0f);
-    winner2.color = ccc3(26, 46, 149);
+    //winner2.color = ccc3(26, 46, 149);
+    winner2.color = ccGREEN;
     [self addChild:winner2];
     
-    HS2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H2] fontName:@"Arial" fontSize:24];
+    HS2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H2] fontName:@"Arial" fontSize:28];
     HS2.position = ccp(340.0f, 240.0f);
     HS2.color = ccc3(26, 46, 149);
+    HS2.color = ccGREEN;
     [self addChild:HS2];
     
-    winner3 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"3. %@",W3] fontName:@"Arial" fontSize:24];
+    winner3 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"3. %@",W3] fontName:@"Arial" fontSize:28];
     winner3.position = ccp(160.0f, 200.0f);
     winner3.color = ccc3(26, 46, 149);
+    winner3.color = ccRED;
     [self addChild:winner3];
     
-    HS3 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H3] fontName:@"Arial" fontSize:24];
+    HS3 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H3] fontName:@"Arial" fontSize:28];
     HS3.position = ccp(340.0f, 200.0f);
     HS3.color = ccc3(26, 46, 149);
+    HS3.color = ccRED;
     [self addChild:HS3];    
 }
 
@@ -246,6 +254,13 @@
     if ([defaults integerForKey:@"HS3"]) {
         H3 = [defaults integerForKey:@"HS3"];
     }
+   // NSLog(@"Is muted value BEFORE %d", muted);
+
+    if ([defaults boolForKey:@"IsMuted"]) {
+        muted = [defaults boolForKey:@"IsMuted"];
+    }
+    
+    //NSLog(@"Is muted value afterward %d", muted);
 }
 
 - (void)testScore {
@@ -306,7 +321,6 @@
     [tapLabel release];
     [newHSlabel release];
     [myTextField release];
-    [muteBtn release];
 	[super dealloc];
 }
 
