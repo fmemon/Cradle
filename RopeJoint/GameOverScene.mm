@@ -159,40 +159,41 @@
 }
 
 -(void)setLabels {
-    winner1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"1. %@",W1] fontName:@"Arial" fontSize:28];
+    winner1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"1. %@",W1] fontName:@"Marker Felt" fontSize:28];
     winner1.position = ccp(160.0f, 280.0f);
-    winner1.color = ccc3(26, 46, 149);
-    winner1.color = ccBLUE;
+    winner1.color = ccc3(8,51,255);
+    //winner1.color = ccBLUE;
     [self addChild:winner1];
     
-    HS1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H1]fontName:@"Arial" fontSize:28];
+    HS1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H1] fontName:@"Marker Felt" fontSize:28];
     HS1.position = ccp(340.0f, 280.0f);
-    HS1.color = ccc3(26, 46, 149);
-    winner1.color = ccBLUE;
+    HS1.color = ccc3(8,51,255);
+   // winner1.color = ccBLUE;
     [self addChild:HS1];
    
-    winner2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"2. %@",W2] fontName:@"Arial" fontSize:28];
+    winner2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"2. %@",W2] fontName:@"Marker Felt" fontSize:28];
     winner2.position = ccp(160.0f, 240.0f);
-    //winner2.color = ccc3(26, 46, 149);
-    winner2.color = ccGREEN;
+    //winner2.color = ccc3(255,146,0);
+    winner2.color = ccRED;
     [self addChild:winner2];
     
-    HS2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H2] fontName:@"Arial" fontSize:28];
+    HS2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H2] fontName:@"Marker Felt" fontSize:28];
     HS2.position = ccp(340.0f, 240.0f);
-    HS2.color = ccc3(26, 46, 149);
-    HS2.color = ccGREEN;
+    HS2.color = ccc3(255,146,0);
+//    HS3.color = ccc3(222,44,156);
+
+    HS2.color = ccRED;
     [self addChild:HS2];
     
-    winner3 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"3. %@",W3] fontName:@"Arial" fontSize:28];
+    winner3 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"3. %@",W3] fontName:@"Marker Felt" fontSize:28];
     winner3.position = ccp(160.0f, 200.0f);
-    winner3.color = ccc3(26, 46, 149);
-    winner3.color = ccRED;
+    winner3.color = ccc3(189,58,212);
     [self addChild:winner3];
     
-    HS3 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H3] fontName:@"Arial" fontSize:28];
+    HS3 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H3] fontName:@"Marker Felt" fontSize:28];
     HS3.position = ccp(340.0f, 200.0f);
-    HS3.color = ccc3(26, 46, 149);
-    HS3.color = ccRED;
+    HS3.color = ccc3(189,58,212);
+    //HS3.color = ccRED;
     [self addChild:HS3];    
 }
 

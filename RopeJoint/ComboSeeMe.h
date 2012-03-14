@@ -14,8 +14,6 @@
 #import "MyContactListener.h"
 #import "VRope.h"
 #import "MusicHandler.h"
-#import "ShatteredSprite.h"
-//#import "DWFParticleView.h"
 
 // ComboSeeMe
 @interface ComboSeeMe : CCLayer
@@ -69,18 +67,21 @@
     
     BOOL muted;
 
+    //score sprites
+    CCSprite *score100;
+    CCSprite *score200;
+    CCSprite *score500;
+    
 }
 
 // returns a CCScene that contains the ComboSeeMe as the only child
 +(CCScene *) scene;
 - (CCAction*)createBlinkAnim:(BOOL)isTarget;
-- (void)resetShattered;
-- (void)callShattered:(b2Body*)bodyB;
 - (void)callEmitter:(b2Body*)bodyB;
 - (void)updateScore;
 - (void)saveData;
 - (void)restoreData;
 - (void)applyPush:(b2Body*)bodyB;
-
+- (void)scored:(b2Body*)bodyB;
 
 @end

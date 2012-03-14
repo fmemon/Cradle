@@ -10,7 +10,6 @@
 // Import the interfaces
 #import "ComboSeeMe.h"
 #import "SimpleAudioEngine.h"
-#import "ShatteredSprite.h"
 #import "GameOverScene.h"
 
 //Pixel to metres ratio. Box2D uses metres as the unit for measurement.
@@ -84,20 +83,6 @@ static inline float mtp(float d)
         world = new b2World(gravity, doSleep); 
         world->SetContinuousPhysics(true); 
         
-   /*     // Debug Draw functions
-        m_debugDraw = new GLESDebugDraw( PTM_RATIO );
-        world->SetDebugDraw(m_debugDraw); 
-        uint32 flags = 0;
-        flags += b2DebugDraw::e_shapeBit;
-        
-        //  flags += b2DebugDraw::e_jointBit;
-        //  flags += b2DebugDraw::e_aabbBit;
-        //  flags += b2DebugDraw::e_pairBit;
-        //  flags += b2DebugDraw::e_centerOfMassBit;
-        
-        m_debugDraw->SetFlags(flags);  
-        */
-        
         shattered = NO;
         muted = FALSE;
 
@@ -137,30 +122,30 @@ static inline float mtp(float d)
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"froggie.plist"];
         spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"froggie.png"];
         [self addChild:spriteSheet];
-        sprite = [CCSprite spriteWithSpriteFrameName:@"frog1.png"];     
-        //sprite = [CCSprite spriteWithFile:@"blinkie1.png"];     
+        sprite = [CCSprite spriteWithSpriteFrameName:@"froggie1.png"];     
         [self addChild:sprite z:1 tag:88];
         [sprite runAction:[self createBlinkAnim:YES]];
 
+        //add the score sprites
+        score100 = [CCSprite spriteWithSpriteFrameName:@"score100.png"];     
+        score200 = [CCSprite spriteWithSpriteFrameName:@"score200.png"];     
+        score500 = [CCSprite spriteWithSpriteFrameName:@"score500.png"];     
+        score100.position = ccp(screenSize.width/2, 30.0f);
+        score200.position = ccp(screenSize.width/2, 30.0f);
+        score500.position = ccp(screenSize.width/2, 30.0f);
+        [score100 setOpacity:0];
+        [score200 setOpacity:0];
+        [score500 setOpacity:0];
+        [self addChild:score100 z:11 tag:100];
+        [self addChild:score200 z:11 tag:200];
+        [self addChild:score500 z:11 tag:500];
         
-       
-       // CCSprite *sprite2 = [CCSprite spriteWithFile:@"bg.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"background_menu.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"background.jpeg"];
-        // CCSprite *sprite2 = [CCSprite spriteWithFile:@"frogbg.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"frogflies1.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"frogpondwelcome.png"]; //too dark
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"pondB.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"pix1128B.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"pix1128B.png"];
         CCSprite *sprite2 = [CCSprite spriteWithFile:@"u13BMine.png"];
         sprite2.anchorPoint = CGPointZero;
         [self addChild:sprite2 z:-11];
         
         //Circles
         //circle2
-        //CCSprite *ball = [CCSprite spriteWithFile:@"Ball.png"];
-        //[self addChild:ball z:1];
         bodyDef.userData = sprite;
         bodyDef.type = b2_dynamicBody;
         bodyDef.position.Set(0.468085f, 9.574468f);
@@ -186,7 +171,6 @@ static inline float mtp(float d)
         
         //paddle code
         // Create paddle and add it to the layer
-        //CCSprite *paddle = [CCSprite spriteWithFile:@"Paddle.png"];
         CCSprite *paddle = [CCSprite spriteWithFile:@"newPaddle.png"];
         paddle.position = ccp(screenSize.width/2, 50/PTM_RATIO);
         [self addChild:paddle z:1 tag:11];
@@ -199,12 +183,6 @@ static inline float mtp(float d)
         b2Body* staticBody4 = world->CreateBody(&bodyDef1);
         shape.SetAsBox(paddle.contentSize.width/PTM_RATIO/2, paddle.contentSize.height/PTM_RATIO/2);
         fd.shape = &shape;
-        //fd.density = 0.915000f;
-        //fd.friction = 0.0300000f;
-        //fd.restitution = 0.9f;        
-        //fd.filter.groupIndex = int16(0);
-        //fd.filter.categoryBits = uint16(65535);
-        //fd.filter.maskBits = uint16(65535);
         staticBody4->CreateFixture(&fd);
         
 
@@ -234,9 +212,7 @@ static inline float mtp(float d)
         world->SetContactListener(contactListener);
         
         // Preload effect
-        //[[SimpleAudioEngine sharedEngine] preloadEffect:@"hahaha.caf"];
         [MusicHandler preload];
-        //[MusicHandler notifyTargetHit];
 
         //initialize the score
         score  = 0;
@@ -284,12 +260,10 @@ static inline float mtp(float d)
     if ([[SimpleAudioEngine sharedEngine] mute]) {
         // This will unmute the sound
         muted = FALSE;
-        // [[SimpleAudioEngine sharedEngine] setMute:0];
     }
     else {
         //This will mute the sound
         muted = TRUE;
-        //[[SimpleAudioEngine sharedEngine] setMute:1];
     }
     [[SimpleAudioEngine sharedEngine] setMute:muted];    
     
@@ -332,14 +306,14 @@ static inline float mtp(float d)
 
 - (CCAction*)createBlinkAnim:(BOOL)isTarget {
     NSMutableArray *walkAnimFrames = [NSMutableArray array];
-    for (int i=1; i<3; i++) {
+    for (int i=1; i<5; i++) {
         //[walkAnimFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"blinker%dsm.png", i]]];
-        [walkAnimFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"frog%d.png", i]]];
+        [walkAnimFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"froggie%d.png", i]]];
     }
     
-    CCAnimation *walkAnim = [CCAnimation animationWithFrames:walkAnimFrames delay:0.1f];
+    CCAnimation *walkAnim = [CCAnimation animationWithFrames:walkAnimFrames delay:0.2f];
     
-    CCAnimate *blink = [CCAnimate actionWithDuration:0.2f animation:walkAnim restoreOriginalFrame:YES];
+    CCAnimate *blink = [CCAnimate actionWithDuration:0.4f animation:walkAnim restoreOriginalFrame:YES];
     
     CCAction *walkAction = [CCRepeatForever actionWithAction:
                             [CCSequence actions:
@@ -352,12 +326,7 @@ static inline float mtp(float d)
                              [CCDelayTime actionWithDuration:CCRANDOM_0_1()*2.0f],
                              nil]
                             ];
-    
     return walkAction;
-}
-
-- (void)resetShattered {
-    shattered = NO;
 }
 
 -(void) draw
@@ -423,9 +392,6 @@ static inline float mtp(float d)
 			CCSprite *myActor = (CCSprite*)b->GetUserData();
 			myActor.position = CGPointMake( b->GetPosition().x * PTM_RATIO, b->GetPosition().y * PTM_RATIO);
 			myActor.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
-            
-            //random apply impulse
-           //if (CCRANDOM_0_1()*3 == 2) [self applyPush:b];   
 		}	
 	}
 
@@ -433,9 +399,7 @@ static inline float mtp(float d)
 	for(uint i=0;i<[vRopes count];i++) {
 		[[vRopes objectAtIndex:i] update:dt];
 	}
-        
-    
-    
+            
     // Loop through all of the box2d bodies that are currently colliding, that we have
     // gathered with our custom contact listener...
     std::vector<MyContact>::iterator pos;
@@ -451,21 +415,11 @@ static inline float mtp(float d)
             
             // Is sprite A a cat and sprite B a car? 
             if (spriteA.tag == 88 && spriteB.tag == 11) {
-                //toDestroy.push_back(bodyA);
-                [MusicHandler playBounce];
-                [self callEmitter:bodyB];
-                [self updateScore];
-                [self applyPush:bodyB];   
-
+                [self scored:bodyB];
             } 
             // Is sprite A a car and sprite B a cat?  
             else if (spriteA.tag == 11 && spriteB.tag == 88) {
-                //toDestroy.push_back(bodyB);
-                [MusicHandler playBounce];
-                [self callEmitter:bodyB];
-                [self updateScore];
-                [self applyPush:bodyB];   
-
+                [self scored:bodyB];
             } 
         }  
         
@@ -473,9 +427,7 @@ static inline float mtp(float d)
         {
             b2Fixture *fixture;
             fixture = (b2Fixture*)[fixtureData pointerValue];
-            
-            //if (shattered) return;
-            
+                        
             if ((contact.fixtureA == fixture && contact.fixtureB == _ballFixture) ||
                 (contact.fixtureA == _ballFixture && contact.fixtureB == fixture)) {
                 // NSLog(@"Ball hit bottom!");
@@ -484,24 +436,27 @@ static inline float mtp(float d)
                     [MusicHandler playWater];
                     
                     [self saveData];
-                    //GameOverScene *gameOverScene = [GameOverScene node];
                     [[CCDirector sharedDirector] replaceScene:[GameOverScene node]];
                 }
                 else {
-                    //[MusicHandler playWall];
                 }
-                //[self callShattered:bodyB];
             } 
         } 
     }
 }
 
+- (void)scored:(b2Body*)bodyB {
+    [MusicHandler playBounce];
+    [self callEmitter:bodyB];
+    [self updateScore];
+    [self applyPush:bodyB];  
+
+}
+
 - (void)applyPush:(b2Body*)bodyB  {
-   // NSLog(@"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
     CGSize screenSize = [CCDirector sharedDirector].winSize;
     
     int xStrength = (int)((mtp(bodyB->GetPosition().x) - int(screenSize.width/2/PTM_RATIO))/60);
-    //NSLog(@"xStrength value, %i", xStrength);
     
     CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
     if (spriteB.tag == 88) {
@@ -514,18 +469,7 @@ static inline float mtp(float d)
 
 - (void)wallSound {
     NSString* fn = [NSString stringWithFormat:@"TARGET%d_HIT_EFFECT", 1 + arc4random() % 2];
-    //NSLog(@"string value of : %@", fn);
     [[SimpleAudioEngine sharedEngine] playEffect:fn];  
-}
-
-- (void)callShattered:(b2Body*)bodyB {
-    ShatteredSprite	*shatter = [ShatteredSprite shatterWithSprite:[CCSprite spriteWithFile:@"Paddle.png"] piecesX:4 piecesY:5 speed:2.0 rotation:0.01 radial:YES];	
-    
-    shatter.position = CGPointMake( mtp(bodyB->GetPosition().x) ,  mtp(bodyB->GetPosition().y));
-    [shatter runAction:[CCEaseSineIn actionWithAction:[CCMoveBy actionWithDuration:1.0 position:ccp(0, -1000)]]];  
-    [self performSelector:@selector(resetShattered) withObject:nil afterDelay:0.9];
-    [self addChild:shatter z:1 tag:99];	
-    shattered = YES;
 }
 
 - (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -554,25 +498,6 @@ static inline float mtp(float d)
 -(void)callEmitter:(b2Body*)bodyB {
 
     CGSize screenSize = [CCDirector sharedDirector].winSize;
-/*
-      CCParticleExplosion* explosion = [[CCParticleExplosion alloc] initWithTotalParticles:200];
-     //CCParticleSun* explosion = [[CCParticleSun alloc] initWithTotalParticles:200];
-     explosion.texture = [[CCTextureCache sharedTextureCache] addImage:@"stars.png"];
-     //explosion.texture = [[CCTextureCache sharedTextureCache] addImage:@"goldstars1.png"];
-     explosion.autoRemoveOnFinish = YES;
-     explosion.startSize = 10.0f;
-     explosion.speed = 70.0f;
-     explosion.anchorPoint = ccp(0.5f,0.5f);
-    
-     //explosion.position = ccp(screenSize.width/2, 50/PTM_RATIO);
-     explosion.position = CGPointMake( mtp(bodyB->GetPosition().x) ,  mtp(bodyB->GetPosition().y));
-
-    
-     explosion.duration = 1.0f;
-     [self addChild:explosion z:11];
-     [explosion release];
-*/
-    
     CCParticleExplosion *myEmitter;
     //screenSize.width/2/PTM_RATIO
     b2Vec2 velocity = bodyB->GetLinearVelocity();
