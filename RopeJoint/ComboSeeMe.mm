@@ -143,7 +143,16 @@ static inline float mtp(float d)
 
         
        
-        CCSprite *sprite2 = [CCSprite spriteWithFile:@"bg.png"];
+       // CCSprite *sprite2 = [CCSprite spriteWithFile:@"bg.png"];
+        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"background_menu.png"];
+        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"background.jpeg"];
+        // CCSprite *sprite2 = [CCSprite spriteWithFile:@"frogbg.png"];
+        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"frogflies1.png"];
+        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"frogpondwelcome.png"]; //too dark
+        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"pondB.png"];
+        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"pix1128B.png"];
+        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"pix1128B.png"];
+        CCSprite *sprite2 = [CCSprite spriteWithFile:@"u13BMine.png"];
         sprite2.anchorPoint = CGPointZero;
         [self addChild:sprite2 z:-11];
         
@@ -176,7 +185,8 @@ static inline float mtp(float d)
         
         //paddle code
         // Create paddle and add it to the layer
-        CCSprite *paddle = [CCSprite spriteWithFile:@"Paddle.png"];
+        //CCSprite *paddle = [CCSprite spriteWithFile:@"Paddle.png"];
+        CCSprite *paddle = [CCSprite spriteWithFile:@"newPaddle.png"];
         paddle.position = ccp(screenSize.width/2, 50/PTM_RATIO);
         [self addChild:paddle z:1 tag:11];
          
@@ -257,11 +267,11 @@ static inline float mtp(float d)
         */
         
         //Pause Toggle can not sure frame cache for sprites!!!!!
-		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"blinkie1.png"]
-															  selectedSprite:[CCSprite spriteWithFile:@"blinkie1.png"]];
+		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOn.png"]
+															  selectedSprite:[CCSprite spriteWithFile:@"PauseOnSelect.png"]];
         
-		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"blinkie2.png"]
-                                                             selectedSprite:[CCSprite spriteWithFile:@"blinkie2.png"]];
+		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOFF.png"]
+                                                             selectedSprite:[CCSprite spriteWithFile:@"PauseOFFSelect.png"]];
         
 		CCMenuItemToggle *pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:playItem, pauseItem, nil];
 		pause.position = ccp(screenSize.width*0.07, screenSize.height*0.955);
@@ -487,7 +497,7 @@ static inline float mtp(float d)
     
     CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
     if (spriteB.tag == 88) {
-    b2Vec2 force = b2Vec2(0.3*xStrength, 0.3*xStrength);
+    b2Vec2 force = b2Vec2(0.2*xStrength, 0.3*xStrength);
     bodyB->ApplyLinearImpulse(force, bodyB->GetPosition());
         
         
