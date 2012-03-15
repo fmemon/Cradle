@@ -72,11 +72,11 @@
 
         [[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
         //Pause Toggle can not sure frame cache for sprites!!!!!
-		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOn.png"]
-															  selectedSprite:[CCSprite spriteWithFile:@"PauseOnSelect.png"]];
+		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"newPauseON.png"]
+                                                             selectedSprite:[CCSprite spriteWithFile:@"newPauseONSelect.png"]];
         
-		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOFF.png"]
-                                                             selectedSprite:[CCSprite spriteWithFile:@"PauseOFFSelect.png"]];
+		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"newPauseOFF.png"]
+                                                              selectedSprite:[CCSprite spriteWithFile:@"newPauseOFFSelect.png"]];
         CCMenuItemToggle *pause;
 		if (!muted)  {
             pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:playItem, pauseItem, nil];

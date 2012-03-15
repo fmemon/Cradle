@@ -232,11 +232,11 @@ static inline float mtp(float d)
         // Enable touches        
         [[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
         //Pause Toggle can not sure frame cache for sprites!!!!!
-		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOn.png"]
-                                                             selectedSprite:[CCSprite spriteWithFile:@"PauseOnSelect.png"]];
+		CCMenuItemSprite *playItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"newPauseON.png"]
+                                                             selectedSprite:[CCSprite spriteWithFile:@"newPauseONSelect.png"]];
         
-		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"PauseOFF.png"]
-                                                              selectedSprite:[CCSprite spriteWithFile:@"PauseOFFSelect.png"]];
+		CCMenuItemSprite *pauseItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"newPauseOFF.png"]
+                                                              selectedSprite:[CCSprite spriteWithFile:@"newPauseOFFSelect.png"]];
         CCMenuItemToggle *pause;
 		if (!muted)  {
             pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:playItem, pauseItem, nil];
@@ -450,15 +450,16 @@ static inline float mtp(float d)
 }
 
 - (void)endGame:(b2Body*)bodyB {
-    if (stopWater) {[MusicHandler playWater];}
+    if (stopWater) {[MusicHandler playWater];
     stopWater = FALSE;
-    [self callWaterEmitter:bodyB];
-    //[self callEmitter:bodyB];
+    //[self callWaterEmitter:bodyB];
+    [self callEmitter:bodyB];
     bodyB->SetLinearVelocity(b2Vec2(0,0));
     bodyB->SetAngularVelocity(0);
-
+    
     [self saveData];
     [self performSelector:@selector(gotoHS) withObject:nil afterDelay:0.3];
+    }
 }
 
 - (void)gotoHS {
