@@ -220,11 +220,11 @@ static inline float mtp(float d)
         
         highscoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"HighScore: %i",highscore] fontName:@"Arial" fontSize:24];
         highscoreLabel.color = ccc3(26, 46, 149);
-        highscoreLabel.position = ccp(380.0f, 300.0f);
+        highscoreLabel.position = ccp(340.0f, 300.0f);
         [self addChild:highscoreLabel z:10];
         
-        scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Score: %i",score] fontName:@"Arial" fontSize:24];
-        scoreLabel.position = ccp(380.0f, 280.0f);
+        scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"       Score: %i",score] fontName:@"Arial" fontSize:24];
+        scoreLabel.position = ccp(340.0f, 280.0f);
         scoreLabel.color = ccc3(26, 46, 149);
         [self addChild:scoreLabel z:10];
         
@@ -240,11 +240,11 @@ static inline float mtp(float d)
         CCMenuItemToggle *pause;
 		if (!muted)  {
             pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:playItem, pauseItem, nil];
-            pause.position = ccp(screenSize.width*0.06, screenSize.height*0.90f);
+            pause.position = ccp(screenSize.width*0.05, screenSize.height*0.95f);
         }
         else {
             pause = [CCMenuItemToggle itemWithTarget:self selector:@selector(turnOnMusic)items:pauseItem, playItem, nil];
-            pause.position = ccp(screenSize.width*0.06, screenSize.height*0.90f);
+            pause.position = ccp(screenSize.width*0.05, screenSize.height*0.95f);
         }
         
         
@@ -493,15 +493,7 @@ static inline float mtp(float d)
 
 }
 
--(void)callEmitter:(b2Body*)bodyB {
-
-    //CGSize screenSize = [CCDirector sharedDirector].winSize;
-        //screenSize.width/2/PTM_RATIO
-    b2Vec2 velocity = bodyB->GetLinearVelocity();
-    float speed = velocity.LengthSquared()/10;
-   NSLog(@"Speed value: %0.0f", speed);
-    
-    
+-(void)callEmitter:(b2Body*)bodyB {    
     int xStrength = int(abs(bodyB->GetPosition().x - 8)) + 1;
     int numParticle = 30 +CCRANDOM_0_1()*200 * xStrength;
     myEmitter = [[CCParticleExplosion alloc] initWithTotalParticles:numParticle];
@@ -520,31 +512,6 @@ static inline float mtp(float d)
     //NSLog(@" Y values %0.0f Xstrength  %d Speed value: %0.0f  numparticles %d  myemtterspped %f myemitetrscale %0.0f", bodyB->GetPosition().y,xStrength,speed, numParticle, myEmitter.speed, myEmitter.scale);
 }
 
--(void)callWaterEmitter:(b2Body*)bodyB {
-    
-    //CGSize screenSize = [CCDirector sharedDirector].winSize;
-    //screenSize.width/2/PTM_RATIO
-    b2Vec2 velocity = bodyB->GetLinearVelocity();
-    float speed = velocity.LengthSquared()/10;
-    NSLog(@"Speed value: %0.0f", speed);
-    
-    
-    int xStrength = int(abs(bodyB->GetPosition().x - 8)) + 1;
-    int numParticle = 100 +CCRANDOM_0_1()*5;
-    myEmitter = [[CCParticleExplosion alloc] initWithTotalParticles:numParticle];
-    myEmitter.texture = [[CCTextureCache sharedTextureCache] addImage:@"raindrop.png"];
-    myEmitter.position = CGPointMake( mtp(bodyB->GetPosition().x) ,  mtp(bodyB->GetPosition().y));
-    myEmitter.life =0.5f + CCRANDOM_0_1()*0.2;
-    myEmitter.duration = 0.5f + CCRANDOM_0_1()*0.15;
-    myEmitter.scale = 0.5f;
-    myEmitter.speed = 150.0f + CCRANDOM_0_1()*75.0f;
-    //For not showing color
-    myEmitter.blendAdditive = YES;
-    [self addChild:myEmitter z:11];
-    myEmitter.autoRemoveOnFinish = YES;
-    
-   // NSLog(@" Y values %0.0f Xstrength  %d Speed value: %0.0f  numparticles %d  myemtterspped %f myemitetrscale %0.0f", bodyB->GetPosition().y,xStrength,speed, numParticle, myEmitter.speed, myEmitter.scale);
-}
 - (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration
 {	
 	static float prevX=0, prevY=0;

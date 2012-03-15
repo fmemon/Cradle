@@ -86,7 +86,6 @@
 - (void)restoreData;
 - (void)applyPush:(b2Body*)bodyB;
 - (void)scored:(b2Body*)bodyB;
--(void)callWaterEmitter:(b2Body*)bodyB;
 -(void)endGame:(b2Body*)bodyB;
 - (void)gotoHS;
 
