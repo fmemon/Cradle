@@ -71,7 +71,8 @@
     CCSprite *score100;
     CCSprite *score200;
     CCSprite *score500;
-    
+    CCParticleExplosion *myEmitter;
+
 }
 
 // returns a CCScene that contains the ComboSeeMe as the only child

@@ -273,7 +273,6 @@ static inline float mtp(float d)
 }
 
 - (void)updateScore {
-    score +=100;
     [scoreLabel setString:[NSString stringWithFormat:@"Score: %i",score]];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -448,23 +447,37 @@ static inline float mtp(float d)
 - (void)scored:(b2Body*)bodyB {
     [MusicHandler playBounce];
     [self callEmitter:bodyB];
-    [self updateScore];
     [self applyPush:bodyB];  
+    [self updateScore];
 
+   // [score100 runAction:[CCFadeOut actionWithDuration:0.5f]];   //0 to 255 
 }
 
 - (void)applyPush:(b2Body*)bodyB  {
-    CGSize screenSize = [CCDirector sharedDirector].winSize;
+   // CGSize screenSize = [CCDirector sharedDirector].winSize;
     
-    int xStrength = (int)((mtp(bodyB->GetPosition().x) - int(screenSize.width/2/PTM_RATIO))/60);
-    
+    float xStrength = abs(bodyB->GetPosition().x - 8) + 1;
+    //NSLog(@"XSTRENGTH VALUE: %0.0f", xStrength);
+    //NSLog(@"X value: %0.0f and screen %0.0f", bodyB->GetPosition().x, screenSize.width/2 );
+
     CCSprite *spriteB = (CCSprite *) bodyB->GetUserData();
     if (spriteB.tag == 88) {
-    b2Vec2 force = b2Vec2(0.2*xStrength, 0.3*xStrength);
-    bodyB->ApplyLinearImpulse(force, bodyB->GetPosition());
-        
-        
+        //b2Vec2 force = b2Vec2(0.2 + 1/xStrength/8, 0.2 + 1/xStrength/8);
+        b2Vec2 force = b2Vec2(0.2 * xStrength, 0.2 * xStrength);
+        bodyB->ApplyLinearImpulse(force, bodyB->GetPosition());
+
+        if (xStrength >= 3.0f) {
+            [score500 runAction:[CCFadeOut actionWithDuration:0.5f]];   //0 to 255 
+            score +=500;
+        } else if (xStrength >= 2.0f) {
+            [score200 runAction:[CCFadeOut actionWithDuration:0.5f]];   //0 to 255 
+            score +=200;
+        } else if (xStrength >= 1.0f) {
+            [score100 runAction:[CCFadeOut actionWithDuration:0.5f]];   //0 to 255 
+            score +=100;
+        } 
     }
+
 }
 
 - (void)wallSound {
@@ -497,27 +510,30 @@ static inline float mtp(float d)
 
 -(void)callEmitter:(b2Body*)bodyB {
 
-    CGSize screenSize = [CCDirector sharedDirector].winSize;
-    CCParticleExplosion *myEmitter;
-    //screenSize.width/2/PTM_RATIO
+    //CGSize screenSize = [CCDirector sharedDirector].winSize;
+        //screenSize.width/2/PTM_RATIO
     b2Vec2 velocity = bodyB->GetLinearVelocity();
-    float speed = velocity.Length()/10;
-   //NSLog(@"Speed value: %0.0f", speed);
+    float speed = velocity.LengthSquared()/10;
+   NSLog(@"Speed value: %0.0f", speed);
     
     
-    int xStrength = (int)((mtp(bodyB->GetPosition().x) - int(screenSize.width/2/PTM_RATIO))/4);
-    int numParticle = 30 +CCRANDOM_0_1()*10 + xStrength;
+    int xStrength = int(abs(bodyB->GetPosition().x - 8)) + 1;
+    int numParticle = 30 +CCRANDOM_0_1()*200 * xStrength;
     myEmitter = [[CCParticleExplosion alloc] initWithTotalParticles:numParticle];
     myEmitter.texture = [[CCTextureCache sharedTextureCache] addImage:@"goldstars1.png"];
     myEmitter.position = CGPointMake( mtp(bodyB->GetPosition().x) ,  mtp(bodyB->GetPosition().y));
-    myEmitter.life =0.2 + CCRANDOM_0_1()*0.2;
-    myEmitter.duration = 0.3 + CCRANDOM_0_1()*0.35;
-    myEmitter.scale = 0.3 + CCRANDOM_0_1()*0.2 + speed;
-    myEmitter.speed = 50 + CCRANDOM_0_1()*50 + xStrength;
+    myEmitter.life =0.4f + CCRANDOM_0_1()*0.2 * xStrength;
+    myEmitter.duration = 0.3f + CCRANDOM_0_1()*0.35 * xStrength;
+    myEmitter.scale = 0.5f;
+    //myEmitter.scale = 0.3 + CCRANDOM_0_1()*0.2 * xStrength;
+    myEmitter.speed = 50.0f + CCRANDOM_0_1()*50.0f * xStrength;
     //For not showing color
     myEmitter.blendAdditive = YES;
     [self addChild:myEmitter z:11];
     myEmitter.autoRemoveOnFinish = YES;
+    
+    NSLog(@" Y values %0.0f Xstrength  %d Speed value: %0.0f  numparticles %d  myemtterspped %f myemitetrscale %0.0f", bodyB->GetPosition().y,xStrength,speed, numParticle, myEmitter.speed, myEmitter.scale);
+
 
 }
 
@@ -589,6 +605,8 @@ static inline float mtp(float d)
     
     //Try out and use it. Not compulsory
     [self removeAllChildrenWithCleanup: YES];
+    
+    [myEmitter release];
     
 	// don't forget to call "super dealloc"
 	[super dealloc];
