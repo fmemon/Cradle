@@ -20,33 +20,11 @@
 -(id) init
 {
 	if( (self=[super init] )) {
-        /*CCSprite *sprite2 = [CCSprite spriteWithFile:@"bg.png"];
-        sprite2.anchorPoint = CGPointZero;
-        [self addChild:sprite2 z:-11];
-        */
-        
-        // CCSprite *sprite2 = [CCSprite spriteWithFile:@"bg.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"background_menu.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"background.jpeg"];
-        // CCSprite *sprite2 = [CCSprite spriteWithFile:@"frogbg.png"];
-//        CCSprite *sprite2 = [CCSprite spriteWithFile:@"frogflies1.png"];
+
         CCSprite *sprite2 = [CCSprite spriteWithFile:@"u13BMineHS.png"];
 
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"frogpondwelcome.png"]; //too dark
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"pondB.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"pix1128B.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"pix1128B.png"];
-        //CCSprite *sprite2 = [CCSprite spriteWithFile:@"u13B.png"];
         sprite2.anchorPoint = CGPointZero;
         [self addChild:sprite2 z:-11];
-        
-       /* CCMenuItem *On = [CCMenuItemFont itemFromString:@"On" target:self selector:@selector(turnOnMusic)];
-        CCMenuItem *Off = [CCMenuItemFont itemFromString:@"Off" target:self selector:@selector(turnOffMusic)];
-        CCMenu *menu = [CCMenu menuWithItems: On, Off, nil];
-        menu.position = ccp (240,100);
-        [menu alignItemsVerticallyWithPadding:10];
-        [self addChild:menu];
-         */
         
         //initialize data
         W1 = @"HighScorer";
@@ -62,7 +40,7 @@
         [self restoreData];
         [self setLabels];
  
-        NSLog(@"After Restore: W1: %@  W2: %@  W3: %@  newWinner: %@", W1, W2, W3, newWinner);
+       // NSLog(@"After Restore: W1: %@  W2: %@  W3: %@  newWinner: %@", W1, W2, W3, newWinner);
 
         if (newHS >= H1 || newHS >= H2 || newHS >= H3) {
             UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:@"Add Username" message:@"This gets covered." delegate:self cancelButtonTitle:@"Done" otherButtonTitles:@"Cancel", nil];
@@ -130,7 +108,7 @@
         //[[SimpleAudioEngine sharedEngine] setMute:1];
     }
     [[SimpleAudioEngine sharedEngine] setMute:muted];
-    NSLog(@"in mute Siund %d", muted);
+    //NSLog(@"in mute Siund %d", muted);
     
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -162,26 +140,20 @@
     winner1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"1. %@",W1] fontName:@"Marker Felt" fontSize:28];
     winner1.position = ccp(160.0f, 280.0f);
     winner1.color = ccc3(8,51,255);
-    //winner1.color = ccBLUE;
     [self addChild:winner1];
     
     HS1 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H1] fontName:@"Marker Felt" fontSize:28];
     HS1.position = ccp(340.0f, 280.0f);
     HS1.color = ccc3(8,51,255);
-   // winner1.color = ccBLUE;
     [self addChild:HS1];
    
     winner2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"2. %@",W2] fontName:@"Marker Felt" fontSize:28];
     winner2.position = ccp(160.0f, 240.0f);
-    //winner2.color = ccc3(255,146,0);
     winner2.color = ccRED;
     [self addChild:winner2];
     
     HS2 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H2] fontName:@"Marker Felt" fontSize:28];
     HS2.position = ccp(340.0f, 240.0f);
-    HS2.color = ccc3(255,146,0);
-//    HS3.color = ccc3(222,44,156);
-
     HS2.color = ccRED;
     [self addChild:HS2];
     
@@ -193,15 +165,12 @@
     HS3 = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",H3] fontName:@"Marker Felt" fontSize:28];
     HS3.position = ccp(340.0f, 200.0f);
     HS3.color = ccc3(189,58,212);
-    //HS3.color = ccRED;
     [self addChild:HS3];    
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField*)textField {
 	//Terminate editing 
 	[textField resignFirstResponder]; 
-    //[myText setHidden:YES];
-
 	return YES; 
 } 
 

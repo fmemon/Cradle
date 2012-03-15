@@ -83,7 +83,7 @@ static inline float mtp(float d)
         world = new b2World(gravity, doSleep); 
         world->SetContinuousPhysics(true); 
         
-        shattered = NO;
+        stopWater = TRUE;
         muted = FALSE;
 
         
@@ -432,10 +432,8 @@ static inline float mtp(float d)
                 // NSLog(@"Ball hit bottom!");
                 
                 if (contact.fixtureA == _bottomFixture  || contact.fixtureB == _bottomFixture) {
-                    [MusicHandler playWater];
-                    
-                    [self saveData];
-                    [[CCDirector sharedDirector] replaceScene:[GameOverScene node]];
+                    b2Body *bodyB = contact.fixtureB->GetBody();
+                    [self endGame:bodyB];
                 }
                 else {
                 }
@@ -449,8 +447,22 @@ static inline float mtp(float d)
     [self callEmitter:bodyB];
     [self applyPush:bodyB];  
     [self updateScore];
+}
 
-   // [score100 runAction:[CCFadeOut actionWithDuration:0.5f]];   //0 to 255 
+- (void)endGame:(b2Body*)bodyB {
+    if (stopWater) {[MusicHandler playWater];}
+    stopWater = FALSE;
+    [self callWaterEmitter:bodyB];
+    //[self callEmitter:bodyB];
+    bodyB->SetLinearVelocity(b2Vec2(0,0));
+    bodyB->SetAngularVelocity(0);
+
+    [self saveData];
+    [self performSelector:@selector(gotoHS) withObject:nil afterDelay:0.3];
+}
+
+- (void)gotoHS {
+    [[CCDirector sharedDirector] replaceScene:[GameOverScene node]];
 }
 
 - (void)applyPush:(b2Body*)bodyB  {
@@ -480,34 +492,6 @@ static inline float mtp(float d)
 
 }
 
-- (void)wallSound {
-    NSString* fn = [NSString stringWithFormat:@"TARGET%d_HIT_EFFECT", 1 + arc4random() % 2];
-    [[SimpleAudioEngine sharedEngine] playEffect:fn];  
-}
-
-- (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (mouseJoint != nil) return;
-    
-    UITouch *myTouch = [touches anyObject];
-    CGPoint location = [myTouch locationInView:[myTouch view]];
-    location = [[CCDirector sharedDirector] convertToGL:location];
-    b2Vec2 locationWorld = b2Vec2(location.x/PTM_RATIO, location.y/PTM_RATIO);
-      
-    //for paddle
-    if (_paddleFixture->TestPoint(locationWorld)) {
-        b2MouseJointDef md;
-        md.bodyA = anchorBody;
-        md.bodyB = _paddleBody;
-        md.target = locationWorld;
-        md.collideConnected = true;
-        md.maxForce = 1000.0f * _paddleBody->GetMass();
-        
-        _mouseJoint = (b2MouseJoint *) world->CreateJoint(&md);
-        _paddleBody->SetAwake(true);
-    }
-}
-
 -(void)callEmitter:(b2Body*)bodyB {
 
     //CGSize screenSize = [CCDirector sharedDirector].winSize;
@@ -532,31 +516,34 @@ static inline float mtp(float d)
     [self addChild:myEmitter z:11];
     myEmitter.autoRemoveOnFinish = YES;
     
-    NSLog(@" Y values %0.0f Xstrength  %d Speed value: %0.0f  numparticles %d  myemtterspped %f myemitetrscale %0.0f", bodyB->GetPosition().y,xStrength,speed, numParticle, myEmitter.speed, myEmitter.scale);
-
+    //NSLog(@" Y values %0.0f Xstrength  %d Speed value: %0.0f  numparticles %d  myemtterspped %f myemitetrscale %0.0f", bodyB->GetPosition().y,xStrength,speed, numParticle, myEmitter.speed, myEmitter.scale);
 }
 
-- (void)ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (mouseJoint == nil) return;
+-(void)callWaterEmitter:(b2Body*)bodyB {
     
-    UITouch *myTouch = [touches anyObject];
-    CGPoint location = [myTouch locationInView:[myTouch view]];
-    location = [[CCDirector sharedDirector] convertToGL:location];
-    b2Vec2 locationWorld = b2Vec2(location.x/PTM_RATIO, location.y/PTM_RATIO);
+    //CGSize screenSize = [CCDirector sharedDirector].winSize;
+    //screenSize.width/2/PTM_RATIO
+    b2Vec2 velocity = bodyB->GetLinearVelocity();
+    float speed = velocity.LengthSquared()/10;
+    NSLog(@"Speed value: %0.0f", speed);
     
-    mouseJoint->SetTarget(locationWorld);
+    
+    int xStrength = int(abs(bodyB->GetPosition().x - 8)) + 1;
+    int numParticle = 100 +CCRANDOM_0_1()*5;
+    myEmitter = [[CCParticleExplosion alloc] initWithTotalParticles:numParticle];
+    myEmitter.texture = [[CCTextureCache sharedTextureCache] addImage:@"raindrop.png"];
+    myEmitter.position = CGPointMake( mtp(bodyB->GetPosition().x) ,  mtp(bodyB->GetPosition().y));
+    myEmitter.life =0.5f + CCRANDOM_0_1()*0.2;
+    myEmitter.duration = 0.5f + CCRANDOM_0_1()*0.15;
+    myEmitter.scale = 0.5f;
+    myEmitter.speed = 150.0f + CCRANDOM_0_1()*75.0f;
+    //For not showing color
+    myEmitter.blendAdditive = YES;
+    [self addChild:myEmitter z:11];
+    myEmitter.autoRemoveOnFinish = YES;
+    
+   // NSLog(@" Y values %0.0f Xstrength  %d Speed value: %0.0f  numparticles %d  myemtterspped %f myemitetrscale %0.0f", bodyB->GetPosition().y,xStrength,speed, numParticle, myEmitter.speed, myEmitter.scale);
 }
-
-- (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (mouseJoint != nil)
-    {
-        world->DestroyJoint(mouseJoint);
-        mouseJoint = nil;
-    }
-}
-
 - (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration
 {	
 	static float prevX=0, prevY=0;
